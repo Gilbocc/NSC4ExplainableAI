@@ -320,5 +320,18 @@ def run():
     with open(report_file, 'w') as fou:
         json.dump(data_dict, fou, indent=4)
 
+# Sets up the logging framework.
+def setup_logs(data_dir):
+    output_dir = os.path.join(data_dir, 'logs')
+    if not os.path.isdir(output_dir):
+        try:
+            os.makedirs(output_dir)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+    sys.stdout = open(os.path.join(output_dir, 'out.stdout.txt'), 'w')
+    sys.stderr = open(os.path.join(output_dir, 'out.stderr.txt'), 'w')
+
 if __name__ == '__main__':
+    setup_logs(os.getcwd())
     run()
