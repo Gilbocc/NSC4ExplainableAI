@@ -2,9 +2,6 @@
 
 <img width="100" alt="portfolio_view" align="left" src="https://www.sri.inf.ethz.ch/assets/systems/dl2-logo.png"><a href="https://www.sri.inf.ethz.ch/"><img width="100" alt="portfolio_view" align="right" src="http://safeai.ethz.ch/img/sri-logo.svg"></a><br />
 
-
-
-
 DL2 is a framework that allows training neural networks with logical constraints over numerical values in the network (e.g. inputs, outputs, weights) and to query networks for inputs fulfilling a logical formula. An example query is shown [below](#example-query). For more details read [training/README.md](https://github.com/eth-sri/dl2/tree/master/training) and [querying/README.md](https://github.com/eth-sri/dl2/tree/master/querying).
 
 This is implementation of DL2 can be used as a library compatible with PyTorch and can be used to reproduce the results of the DL2 [research paper](https://www.sri.inf.ethz.ch/publications/fischer2019dl2).
@@ -45,16 +42,37 @@ This example query, spans 3 networks: a generator `GEN` and two classifiers `NN1
 │   ├── run.py             - runs the querying experiments from the paper
 │   ├── run_additional.py  - runs the additional querying experiments from the appendix
 │   └── train_models.sh    - downloads and trains the models required for the queries
-└── requirements.txt       - pip requirements
+└── install.py             - requirements
 
 ```
 
 Some files omitted.
 
 ## Installation
-DL2 was developed and tested with with `python 3.6`, but should also work with newer versions.
-All requirements can be installed via `pip install -r requirements.txt`.
-Afterwards the folder dl2lib can be imported as a python library (for details see examples).
+
+0 - Install Anaconda
+
+    Fix SSL: https://github.com/conda/conda/issues/8273
+
+2 - Create the virtual environment
+    
+    conda create --prefix=./envs python=3.6
+
+3 - Activete the newly created environment
+    
+    conda activate ./envs
+
+4 - Install the dependencies
+    
+    python ./install.py
+
+5 - To disable the virtual environment use
+    
+    conda deactivate
+
+6 - To delete the envireonment use
+
+    conda env remove -p ./envs
 
 ## Reproducing Results and Examples
 For examples see the files in`training` and `querying`, which implement the experiments from the paper.
