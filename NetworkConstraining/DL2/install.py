@@ -9,6 +9,7 @@ os.system('conda install -c pytorch')
 os.system('conda install matplotlib')
 os.system('conda install scikit-learn')
 os.system('conda install configargparse')
+os.system('conda install pandas')
 #pip dependencies
 os.system('python -m pip install --upgrade pip')
 os.system('pip install functional')
