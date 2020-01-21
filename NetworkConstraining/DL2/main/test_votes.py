@@ -6,7 +6,7 @@ import torch.optim as optim
 import json
 import time
 from torchvision import datasets, transforms
-from oracles import DL2_Oracle
+from common.oracle import DL2_Oracle
 import sys
 import dl2lib as dl2
 
@@ -15,7 +15,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.utils.data as data
 from torch.utils.data.sampler import SubsetRandomSampler
-from constraints import Constraint, transform_network_output
+from common.constraint import Constraint, transform_network_output
 
 parser = argparse.ArgumentParser(description='Train NN with constraints')
 parser = dl2.add_default_parser_args(parser)

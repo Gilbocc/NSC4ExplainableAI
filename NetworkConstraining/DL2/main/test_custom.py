@@ -6,7 +6,7 @@ import torch.optim as optim
 import json
 import time
 from torchvision import datasets, transforms
-from oracles import DL2_Oracle
+from common.oracle import DL2_Oracle
 import sys
 import dl2lib as dl2
 import random
@@ -16,7 +16,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.utils.data as data
 from torch.utils.data.sampler import SubsetRandomSampler
-from constraints import Constraint, transform_network_output
+from common.constraint import Constraint, transform_network_output
 
 parser = argparse.ArgumentParser(description='Train NN with constraints')
 parser = dl2.add_default_parser_args(parser)
@@ -32,7 +32,7 @@ class Values(data.Dataset):
         print(pd_data['Name'].cat.categories)
         names = pd_data['Name'].cat.codes.values.astype('int64')
         surnames = pd_data['Surname'].cat.codes.values.astype('int64')
-        categorical_data = np.stack([names, surnames, pd_data['HasA'].values, pd_data['HasB'].values], 1)
+        categorical_data = np.stack([names, surnames], 1)
         
         self.data = torch.tensor(categorical_data, dtype=torch.int64)
         self.target = torch.tensor(pd_data['Class'].values).flatten()
@@ -46,13 +46,15 @@ class Values(data.Dataset):
         return b
 
 class Model(nn.Module):
-    def __init__(self, n_in=4, n_hidden=0, n_out=2):
+    def __init__(self, n_in=2, n_hidden=20, n_out=2):
         super(Model, self).__init__()
          
         self.linearlinear = nn.Sequential(
-            nn.Linear(n_in, 10, bias=True),
+            nn.Linear(n_in, n_hidden, bias=True),
             nn.ReLU(),
-            nn.Linear(10, n_out, bias=True),
+            nn.Linear(n_hidden, n_hidden, bias=True),
+            nn.ReLU(),
+            nn.Linear(n_hidden, n_out, bias=True),
         )
         self.logprob = nn.LogSoftmax(dim=1)
     
@@ -71,33 +73,23 @@ class DummyConstraint(Constraint):
         self.n_gvars = 0
         self.name = 'DummyL'
         self.names = {
-            'Carlo' : 0, 
-            'Gianni' : 1,
-            'Pino' : 2,
-            'Zenio' : 3
+            'Achille' : 0,
+            'Pino' : 1,
+            'Zenio' : 2
         }
 
     def params(self):
         return {'network_output' : self.network_output}
 
     def get_neighbor(self, x, y, index):
-        item = torch.tensor([x.data[0], x.data[1] + index, 0, 0])
-        classification = torch.tensor(1, dtype=torch.float) if x.data[0] == self.names['Pino'] or x.data[0] == self.names['Zenio'] else torch.tensor(0, dtype=torch.float)
+        # item = torch.tensor([x.data[0], x.data[1] + index])
+        item = torch.tensor([x.data[0], random.randint(0, 100000)])
+        classification = torch.tensor(1, dtype=torch.float) if x.data[0] == self.names['Achille'] or x.data[0] == self.names['Zenio'] else torch.tensor(0, dtype=torch.float)
         return (item, classification)
 
     def get_condition(self, x, y):
-        
-        a = dl2.EQ(x[0], torch.tensor(self.names['Pino'], dtype=torch.float))
-        a2 = dl2.EQ(x[0], torch.tensor(self.names['Zenio'], dtype=torch.float))
-        b = dl2.LT(x[0], torch.tensor(self.names['Pino'], dtype=torch.float))
-
-        rules = [
-            dl2.Implication(a, dl2.LT(y[0], y[1])),
-            dl2.Implication(a2, dl2.LT(y[0], y[1])),
-            # dl2.Implication(b, dl2.LT(y[1], y[0]))
-        ]
-
-        return dl2.And(rules)
+        a = dl2.EQ(x[0], torch.tensor(self.names['Achille'], dtype=torch.float))
+        return dl2.Implication(a, dl2.LT(y[0], y[1]))
 
 def split_dataset(dataset, batch_size, validation_split, shuffle_dataset, random_seed):
     dataset_size = len(dataset)
@@ -137,25 +129,25 @@ def local_constraining(oracle, model, data, target):
 
     return dl2_batch_loss
 
-def train(train_loader, model, criterium, optimizer, constrain_weight):
+def train(train_loader, model, criterium, optimizer, constraint_weight, global_constraining, num_epochs):
 
     constraint = DummyConstraint(model, use_cuda=False, network_output='logprob')
-    oracle = DL2_Oracle(learning_rate=0.01, net=model, constraint=constraint, use_cuda=False)
+    oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
 
     for k, (data, target) in enumerate(train_loader):
-        data = Variable(data.float(), requires_grad=False)
-        target = Variable(target.long(), requires_grad=False)
+        data_variable = Variable(data.float(), requires_grad=False)
+        target_variable = Variable(target.long(), requires_grad=False)
 
         optimizer.zero_grad()
 
         # Traditional loss
-        pred = model(data)
-        loss = criterium(pred, target)
+        pred = model(data_variable)
+        loss = criterium(pred, target_variable)
 
         # Using predictions to adjust the loss (constraining based on train data)
-        c_loss = local_constraining(oracle, model, data, pred)
-        print(c_loss)
-        final_loss = loss + (c_loss * constrain_weight)
+        c_loss = local_constraining(oracle, model, data_variable, pred)
+        print('Constraint Loss {:.4f} at iter {:d}'.format(c_loss.item(), k))
+        final_loss = loss + (c_loss * constraint_weight)
 
         # Computing gradient and updating weights
         final_loss.backward()
@@ -170,11 +162,12 @@ def train(train_loader, model, criterium, optimizer, constrain_weight):
             optimizer.zero_grad()
             pred = model(data)
             loss = criterium(pred, target)
-            #print('Custom Loss {:.4f} at iter {:d}'.format(loss.item(), k))
+            print('Ghost Loss {:.4f} at iter {:d}'.format(loss.item(), k))
             loss.backward()
             optimizer.step()
 
-        oracle.global_training(200, optimize)
+        if global_constraining:
+            oracle.global_training(200, num_epochs, optimize, data, target)
 
 def evaluate(validation_loader, model, criterium):
     
@@ -195,26 +188,34 @@ def evaluate(validation_loader, model, criterium):
 
         print(confusion_matrix(target, y_val))
         print(classification_report(target, y_val))
-        print(accuracy_score(target, y_val))
+        print('Accuracy score: {:.4f}'.format(accuracy_score(target, y_val)))
         return accuracy_score(target, y_val)
 
-def run(dataset_path, constrain_weight):
+def run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed):
 
     dataset = Values(dataset_path)
 
     train_loader, validation_loader = split_dataset(dataset, batch_size=200, validation_split=0.2, 
-        shuffle_dataset=True, random_seed=41)
+        shuffle_dataset=True, random_seed=random_seed)
     
     model = Model()
     print(model)
     criterium = nn.NLLLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
-    train(train_loader, model, criterium, optimizer, constrain_weight)
+    for k in range(num_epochs):
+        print('Training epoch number {:d}'.format(k))
+        train(train_loader, model, criterium, optimizer, constraint_weight, global_constraining, num_epochs)
+
     return evaluate(validation_loader, model, criterium)
             
 if __name__ == '__main__':
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\NSC4ExplainableAI\NetworkConstraining\DL2\test\output_2.csv'
-    results = [run(path, 0.0) for i in range(5)]
-    print('Mean accuracy for 100 runs')
-    print(sum(results) / len(results))
+    # path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\NSC4ExplainableAI\NetworkConstraining\DL2\test\output_simplified_2.csv'
+    path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_2.csv'
+    constraint_weight = 0.0
+    global_constraining = False
+    num_epochs = 50
+    random_seed_base = 41
+    num_runs = 1
+    results = [run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i) for i in range(num_runs)]
+    print('Mean accuracy for {:d} runs: {:.4f}'.format(num_runs, sum(results) / len(results)))
