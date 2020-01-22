@@ -91,12 +91,11 @@ class DummyConstraint(Constraint):
         a = dl2.EQ(x[0], torch.tensor(self.names['Achille'], dtype=torch.float))
         return dl2.Implication(a, dl2.LT(y[0], y[1]))
 
-def split_dataset(dataset, batch_size, validation_split, shuffle_dataset, random_seed):
+def split_dataset(dataset, batch_size, validation_split, shuffle_dataset):
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
     split = int(np.floor(validation_split * dataset_size))
     if shuffle_dataset :
-        np.random.seed(random_seed)
         np.random.shuffle(indices)
     train_indices, val_indices = indices[split:], indices[:split]
 
@@ -191,12 +190,15 @@ def evaluate(validation_loader, model, criterium):
         print('Accuracy score: {:.4f}'.format(accuracy_score(target, y_val)))
         return accuracy_score(target, y_val)
 
-def run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed):
+def run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output):
+
+    torch.manual_seed(random_seed)
+    np.random.seed(random_seed)
+    random.seed(random_seed)
 
     dataset = Values(dataset_path)
 
-    train_loader, validation_loader = split_dataset(dataset, batch_size=200, validation_split=0.2, 
-        shuffle_dataset=True, random_seed=random_seed)
+    train_loader, validation_loader = split_dataset(dataset, batch_size=200, validation_split=0.2, shuffle_dataset=True)
     
     model = Model()
     print(model)
@@ -207,15 +209,20 @@ def run(dataset_path, constraint_weight, global_constraining, num_epochs, random
         print('Training epoch number {:d}'.format(k))
         train(train_loader, model, criterium, optimizer, constraint_weight, global_constraining, num_epochs)
 
+    if save_output:
+        torch.save(model.state_dict(), model_path)
+
     return evaluate(validation_loader, model, criterium)
             
 if __name__ == '__main__':
-    # path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\NSC4ExplainableAI\NetworkConstraining\DL2\test\output_simplified_2.csv'
-    path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_2.csv'
+    # path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\NSC4ExplainableAI\NetworkConstraining\DL2\test\output_simplified.csv'
+    path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified.csv'
+    model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model.ph'
+    save_output = True
     constraint_weight = 0.0
     global_constraining = False
     num_epochs = 50
     random_seed_base = 41
     num_runs = 1
-    results = [run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i) for i in range(num_runs)]
+    results = [run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i, model_path, save_output) for i in range(num_runs)]
     print('Mean accuracy for {:d} runs: {:.4f}'.format(num_runs, sum(results) / len(results)))
