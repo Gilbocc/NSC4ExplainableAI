@@ -1,0 +1,79 @@
+name(pino)
+name(zenio)
+name(achille)
+
+surname(rsdaadad)
+surname(pkioasdsd)
+
+class(zero)
+class(one)
+
+person(name(pino), surname(rsdaadad))
+person(name(achille), surname(pkioasdsd))
+person(name(zenio), surname(rsdaadad))
+
+class(zero) := person(name(pino), X)
+class(one) := person(name(zenio), X)
+class(one) := person(name(achille), X)
+
+
+------------------------------------------------------
+
+
+person(pino, rsdaadad)
+person(achille, pkioasdsd)
+person(zenio, rsdaadad)
+
+label(person(pino, rsdaadad), class(zero))
+label(person(achille, pkioasdsd), class(one))
+label(person(zenio, rsdaadad), class(one))
+
+class(zero) :- person(pino, X)
+class(one) :- person(zenio, X)
+class(one) :- person(achille, X)
+
+
+-------------------------------------------------------
+
+equal(X, X).
+
+label(one, person(X, Y)) :- equal(zenio, X).
+label(one, person(X, Y)) :- equal(achille, X).
+label(zero, person(X, Y)).
+
+--------------------------------------------------------
+
+label(one, person(zenio, Y)).
+label(one, person(achille, Y)).
+label(zero, person(X, Y)).
+
+--------------------------------------------------------
+
+class(zero) :- nameWithClass(pino, zero), person(pino, scotto)
+
+3 classification(X, Y, Z) :- nameWithClass(Y, X), person(Y, Z)
+
+class(zero).
+class(one).
+
+person(pino, scotto).
+person(achille, lauro).
+person(zenio, zucca).
+
+name(pino).
+name(achille).
+name(zenio).
+
+nameWithClass(pino, zero).
+nameWithClass(achille, one).
+nameWithClass(zenio, one).
+
+surnameWithClass(scotto, zero).
+surnameWithClass(lauro, one).
+surnameWithClass(zucca, one).
+
+classification(pino, scotto, zero).
+classification(achille, lauro, one).
+classification(zenio, zucca, one).
+
+classification(X, Y, Z) :- nameWithClass(X, Z), name(X).

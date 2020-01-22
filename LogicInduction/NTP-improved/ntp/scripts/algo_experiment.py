@@ -68,7 +68,7 @@ if __name__ == '__main__':
         eval_history[key] = list()
     auc_helper_list = list()
     
-    for i in range(1):
+    for i in range(n_runs):
         print("Run: " + str(i))
 
         conf["logging"]["log_dir"] = base_dir + "run" + str(i) + "/"
@@ -90,50 +90,55 @@ if __name__ == '__main__':
         kb = load_from_list(train_list)
         templates = load_from_list(rules_list, rule_template=True)
 
+        rules, confidences, eval_dict = train_model(kb, templates, conf, relationships=symbol_relationships, test_kb=test_kb)
+        
+        print('-------------relationships-------------')
         print(relationships)
-        print('-------')
+        print('-------------symbol_relationships-------------')
         print(symbol_relationships)
-        print('-------')
-        print(kb)
-        print('-------')
+        print('-------------templates-------------')
+        print(templates)
+        print('-------------rules_list-------------')
         print(rules_list)
+        print('-------------rules-------------')
+        print(rules)
+        print('-------------confidences-------------')
+        print(confidences)
+        print('-------------relationships-------------')
+        print(relationships)
 
-        # rules, confidences, eval_dict = train_model(kb, templates, conf, relationships=symbol_relationships, test_kb=test_kb)
+        constant_dict = gen_constant_dict(train_list)
+        eval_dict["active_facts"] = count_active(constant_dict, relationships)
+        eval_dict["active_ratio"] = eval_dict["active_facts"] / len(train_list)        
         
-        # print(relationships)
-
-        # constant_dict = gen_constant_dict(train_list)
-        # eval_dict["active_facts"] = count_active(constant_dict, relationships)
-        # eval_dict["active_ratio"] = eval_dict["active_facts"] / len(train_list)        
+        for key, value in eval_dict.items():
+            if key in eval_history:
+                print(key, value)
+                eval_history[key].append(value)
         
-        # for key, value in eval_dict.items():
-        #     if key in eval_history:
-        #         print(key, value)
-        #         eval_history[key].append(value)
-        
-        # auc_helper_list.append(eval_dict["auc_helper"])
-        # print(eval_dict["auc_helper"])
+        auc_helper_list.append(eval_dict["auc_helper"])
+        print(eval_dict["auc_helper"])
 
-    # print(conf["model"], conf["experiment"])
+    print(conf["model"], conf["experiment"])
 
-    # with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
-    #     for key, value in eval_history.items():
-    #         tf.contrib.summary.scalar(key, np.mean(eval_history[key]), step=0)        
-    #         print("average " + key + ":", str(np.mean(value)) + " (" + str(np.std(value)/np.sqrt(n_runs)) + ")")
+    with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
+        for key, value in eval_history.items():
+            tf.contrib.summary.scalar(key, np.mean(eval_history[key]), step=0)        
+            print("average " + key + ":", str(np.mean(value)) + " (" + str(np.std(value)/np.sqrt(n_runs)) + ")")
 
-    # targets, scores = [], []
-    # for run_tuple in auc_helper_list:
-    #     targets.extend(run_tuple[0])
-    #     scores.extend(run_tuple[1])
+    targets, scores = [], []
+    for run_tuple in auc_helper_list:
+        targets.extend(run_tuple[0])
+        scores.extend(run_tuple[1])
     
-    # if all(elem == targets[0] for elem in targets):
-    #     pr_auc = 1.0
+    if all(elem == targets[0] for elem in targets):
+        pr_auc = 1.0
         
-    # else:
-    #     pr_auc = metrics.average_precision_score(targets, scores)
-    # with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():        
-    #     tf.contrib.summary.scalar("rule-pr-auc", pr_auc, step=0)
-    # print("rule-pr-auc: " + str(pr_auc))
+    else:
+        pr_auc = metrics.average_precision_score(targets, scores)
+    with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():        
+        tf.contrib.summary.scalar("rule-pr-auc", pr_auc, step=0)
+    print("rule-pr-auc: " + str(pr_auc))
 
     
 

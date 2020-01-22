@@ -8,6 +8,7 @@ import csv
 import numpy as np
 from collections import defaultdict
 import copy
+import sys
 
 
 def run_experiment(conf):
@@ -118,10 +119,11 @@ def run_experiment(conf):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-conf_path', default="conf_synth/synth1.conf")
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('-conf_path', default="conf_synth/synth1.conf")
+    # args = parser.parse_args()
 
+    path = sys.argv[1]
 
     curr_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -132,7 +134,8 @@ if __name__ == "__main__":
     experiment_category = "synth1"
     output_path = base_output_path + experiment_category + ".csv"
     
-    config_path = base_config_path + args.conf_path 
+    # config_path = base_config_path + args.conf_path 
+    config_path = base_config_path + path
     conf = load_conf(config_path)
 
     conf["experiment"] = {}
