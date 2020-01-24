@@ -1,7 +1,6 @@
 import os
 
 #conda dependencies
-os.system('conda install -c conda-forge tensorflow=1.13.2')
 os.system('conda install gensim')
 os.system('conda install scikit-learn')
 os.system('conda install flask')
@@ -15,4 +14,5 @@ os.system('conda install pytest-xdist')
 os.system('conda install pytest-cov')
 #pip dependencies
 os.system('python -m pip install --upgrade pip')
+os.system('pip install tensorflow==1.15')
 os.system('pip install parsimonious')

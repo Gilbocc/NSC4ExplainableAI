@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-"""Main experimental script. Randomly generates dataset and trains NTP model on dataset n times, and reports aggregate results."""
-
 import os
 import argparse
 import random
@@ -36,33 +34,19 @@ def read_list_from_file(path):
 
 if __name__ == '__main__':
 
+    tf.test.is_built_with_cuda()
     tf.enable_eager_execution()
 
     print("GPUs Available: ", get_available_gpus())
-
-
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('-conf_path', default="conf_synth/algexp.conf")
-    # args = parser.parse_args()
 
     path = sys.argv[1]
 
     conf = load_conf(path)
 
-    n_pred = conf["experiment"]["n_pred"]
-    n_constants = conf["experiment"]["n_constants"]
-    n_rel = conf["experiment"]["n_rel"]
-    body_predicates = conf["experiment"]["n_body"]
-    order = conf["experiment"]["order"]
-    n_rules = conf["experiment"]["n_rules"]
-    p_normal = conf["experiment"]["p_normal"]
-    p_relationship = conf["experiment"]["p_relationship"]
     base_seed = conf["experiment"]["base_seed"]
 
     random.seed(base_seed)
     np.random.seed(base_seed)
-
-    n_runs = conf["experiment"]["n_runs"]
 
     base_dir = conf["logging"]["log_dir"] + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
     summary_writer = tf.contrib.summary.create_file_writer(base_dir + conf["experiment"]["name"])
@@ -79,10 +63,13 @@ if __name__ == '__main__':
     
 
     conf["logging"]["log_dir"] = base_dir + "run/"
-    conf["training"]["seed"] = np.random.randint(100)
+    conf["training"]["seed"] = base_seed
 
-    relationships = read_rel_from_file(conf["data"]["rel_path"])
-    symbol_relationships = relationship_id_to_symbol(relationships)
+    if conf["data"]["rel_path"] != '':
+        relationships = read_rel_from_file(conf["data"]["rel_path"])
+        symbol_relationships = relationship_id_to_symbol(relationships)
+    else:
+        symbol_relationships = None
 
     train_list = read_list_from_file(conf["data"]["data_path"])
     rules_list = read_list_from_file(conf["data"]["rule_path"])
@@ -99,22 +86,27 @@ if __name__ == '__main__':
     kb = load_from_list(train_list)
     templates = load_from_list(rules_list, rule_template=True)
 
-    rules, confidences, eval_dict = train_model(kb, templates, conf, relationships=symbol_relationships, test_kb=test_kb)
+    rules, confidences, stringified_rules, eval_dict = train_model(kb, templates, conf, relationships=symbol_relationships, test_kb=test_kb)
     
-    constant_dict = gen_constant_dict(train_list)
-    eval_dict["active_facts"] = count_active(constant_dict, relationships)
-    eval_dict["active_ratio"] = eval_dict["active_facts"] / len(train_list)        
+    # constant_dict = gen_constant_dict(train_list)
+    # eval_dict["active_facts"] = count_active(constant_dict, relationships)
+    # eval_dict["active_ratio"] = eval_dict["active_facts"] / len(train_list)        
     
-    print('-------------Statistics-------------')
-    for key, value in eval_dict.items():
-        if key in eval_history:
-            print(key, value)
-            eval_history[key].append(value)
+    # print('-------------Statistics-------------')
+    # for key, value in eval_dict.items():
+    #     if key in eval_history:
+    #         print(key, value)
+    #         eval_history[key].append(value)
     
-    auc_helper_list.append(eval_dict["auc_helper"])
-    print(eval_dict["auc_helper"])
+    # auc_helper_list.append(eval_dict["auc_helper"])
+    # print(eval_dict["auc_helper"])
 
     print('-------------Rules-------------')
-    print(rules)
+    print(stringified_rules)
     print('-------------Confidences-------------')
     print(confidences)
+
+    # Saving results
+    with open(conf["data"]["target_path"], 'w+') as target_file:
+        stringified_rules = list(map(lambda x : x + '\n', stringified_rules))
+        target_file.writelines(list(dict.fromkeys(stringified_rules)))

@@ -219,7 +219,7 @@ def train_model(kb, rule_templates, conf, relationships=None, test_kb=None):
 
     eval_dict = OrderedDict()
 
-    rules, confidences = decode_rules(
+    rules, confidences, stringified_rules = decode_rules(
         kb_ids, true_predicate_ids, constant_ids, emb, vocab, verbose=verbose, print_k=20)
 
     # if relationships are known, can calculate relationship learning accuracy
@@ -246,4 +246,4 @@ def train_model(kb, rule_templates, conf, relationships=None, test_kb=None):
         for key in eval_dict:
             tf.contrib.summary.scalar(key, eval_dict[key], step=num_epochs)
 
-    return rules, confidences, eval_dict
+    return rules, confidences, stringified_rules, eval_dict

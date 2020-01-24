@@ -52,15 +52,33 @@ def run(model_path, theory_path):
         'Pino' : 1,
         'Zenio' : 2
     }
+
+    theory = []
     for elem in generate_data():
         with torch.no_grad():
             data = Variable(torch.FloatTensor([[names[elem[0]], random.randint(0, 1000)]]), requires_grad=False)
             c = model(data)
             y_val = np.argmax(c, axis=1)
             print('Predicted value for elem ({:s}, {:s}) is {:d}'.format(elem[0], elem[1], y_val.item()))
-            # Salvare su file
+            # Convert result to prolog
+            theory.append('class({:d}).\n'.format(y_val.item()))
+            theory.append('name({:s}).\n'.format(elem[0].lower()))
+            theory.append('surname({:s}).\n'.format(elem[1].lower()))
+            theory.append('nameWithClass({:s},{:d}).\n'.format(elem[0].lower(), y_val.item()))
+            theory.append('surnameWithClass({:s},{:d}).\n'.format(elem[1].lower(), y_val.item()))
+            theory.append('person({:s},{:s}).\n'.format(elem[0].lower(), elem[1].lower()))
+            theory.append('classification({:s},{:s},{:d}).\n'.format(elem[0].lower(), elem[1].lower(), y_val.item()))
+
+    # Salvare su file
+    with open(theory_path, 'w+') as theory_file:
+        theory_file.writelines(list(dict.fromkeys(theory)))
+            
 
 if __name__ == '__main__':
-    model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model.ph'
-    theory_path = r''
+    # model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_base.ph'
+    # theory_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_theory_base.pl'
+    # model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained.ph'
+    # theory_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_theory_constrained.pl'
+    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained_complete.ph'
+    theory_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_theory_constrained_complete.pl'
     run(model_path, theory_path)

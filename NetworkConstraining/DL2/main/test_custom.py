@@ -17,6 +17,7 @@ from torch.autograd import Variable
 import torch.utils.data as data
 from torch.utils.data.sampler import SubsetRandomSampler
 from common.constraint import Constraint, transform_network_output
+from custom_constraints import CompleteConstraint, AchilleConstraint
 
 parser = argparse.ArgumentParser(description='Train NN with constraints')
 parser = dl2.add_default_parser_args(parser)
@@ -63,34 +64,6 @@ class Model(nn.Module):
         x = self.logprob(x)
         return x
 
-class DummyConstraint(Constraint):
-
-    def __init__(self, net, use_cuda=True, network_output='logits'):
-        self.net = net
-        self.network_output = network_output
-        self.use_cuda = use_cuda
-        self.n_tvars = 1
-        self.n_gvars = 0
-        self.name = 'DummyL'
-        self.names = {
-            'Achille' : 0,
-            'Pino' : 1,
-            'Zenio' : 2
-        }
-
-    def params(self):
-        return {'network_output' : self.network_output}
-
-    def get_neighbor(self, x, y, index):
-        # item = torch.tensor([x.data[0], x.data[1] + index])
-        item = torch.tensor([x.data[0], random.randint(0, 100000)])
-        classification = torch.tensor(1, dtype=torch.float) if x.data[0] == self.names['Achille'] or x.data[0] == self.names['Zenio'] else torch.tensor(0, dtype=torch.float)
-        return (item, classification)
-
-    def get_condition(self, x, y):
-        a = dl2.EQ(x[0], torch.tensor(self.names['Achille'], dtype=torch.float))
-        return dl2.Implication(a, dl2.LT(y[0], y[1]))
-
 def split_dataset(dataset, batch_size, validation_split, shuffle_dataset):
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
@@ -130,7 +103,7 @@ def local_constraining(oracle, model, data, target):
 
 def train(train_loader, model, criterium, optimizer, constraint_weight, global_constraining, num_epochs):
 
-    constraint = DummyConstraint(model, use_cuda=False, network_output='logprob')
+    constraint = CompleteConstraint(model, use_cuda=False, network_output='logprob')
     oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
 
     for k, (data, target) in enumerate(train_loader):
@@ -216,14 +189,15 @@ def run(dataset_path, constraint_weight, global_constraining, num_epochs, random
             
 if __name__ == '__main__':
     # path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified.csv'
-    # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model.ph'
+    # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_base.ph'
+    # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained.ph'
     path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified.csv'
-    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_base.ph'
-    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained.ph'
+    # model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_base.ph'
+    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained_complete.ph'
     save_output = True
-    constraint_weight = 0.0
-    global_constraining = False
-    num_epochs = 50
+    constraint_weight = 0.1
+    global_constraining = True
+    num_epochs = 10
     random_seed_base = 41
     num_runs = 1
     results = [run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i, model_path, save_output) for i in range(num_runs)]

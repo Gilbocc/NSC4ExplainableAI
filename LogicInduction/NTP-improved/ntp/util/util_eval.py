@@ -22,6 +22,7 @@ def decode_rules(kb, true_predicate_ids, constant_ids, emb, vocab, verbose=False
     """
     rules_preds = []
     confidences = []
+    stringified_rules = []
 
     for struct in kb:
         # it's a rule
@@ -44,16 +45,17 @@ def decode_rules(kb, true_predicate_ids, constant_ids, emb, vocab, verbose=False
     
             for j in range(len(rules)):
                 rule, confidence = rules[j]
+                print(rule)
                 preds = [rule[i][0] for i in range(len(rule))]
                 # pred_text = [rule[i][0] for i in range(len(rule))]
                 # preds = [int(text[-1]) for text in pred_text]
                 preds_formatted = [preds[0], set(preds[1:])]
                 rules_preds.append(preds_formatted)
-
                 confidences.append(confidence)
+                stringified_rules.append(rule2string(rule))
                 if verbose and j < print_k:
                     print(confidence, rule2string(rule))
-    return rules_preds, confidences
+    return rules_preds, confidences, stringified_rules
 
 def decode(x, emb, vocab, valid_ids):
     """

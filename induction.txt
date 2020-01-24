@@ -7,3 +7,6 @@ python -m ntp.scripts.generate_dataset C:/Users/giuseppe.pisano/Documents/MyProj
 
 # Logic induction
 python -m ntp.scripts.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/NSC4ExplainableAI/LogicInduction/NTP-improved/conf_synth/induction.conf
+
+
+python -m ntp.scripts.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/NSC4ExplainableAI/LogicInduction/NTP-improved/conf_synth/constraining.conf
