@@ -16,7 +16,6 @@ Posso fare un discorso del genere:
 
 Se riesco a recuperare questa logica allora posso capire l'importanza del nome nella classificazione e rafforzare nella rete questo vincolo per i casi errati (Achille)
 
-PREERER
 
 Salvataggio modello pytorch
 

@@ -2,7 +2,7 @@ import os
 
 #conda dependencies
 os.system('conda install numpy')
-os.system('conda install pillow')
+os.system('conda install pillow=6.1')
 os.system('conda install scipy')
 os.system('conda install pytorch=1.0.0 torchvision=0.2.1 -c pytorch')
 os.system('conda install -c pytorch')
