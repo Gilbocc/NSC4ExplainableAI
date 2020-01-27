@@ -1,68 +1,12 @@
-import argparse
 import os
 import torch
 import numpy as np
-import torch.optim as optim
-import json
-import time
-from torchvision import datasets, transforms
-from common.oracle import DL2_Oracle
-import sys
-import dl2lib as dl2
 import random
-
-import pandas as pd
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.utils.data as data
 from torch.utils.data.sampler import SubsetRandomSampler
-from common.constraint import Constraint, transform_network_output
-from custom_constraints import CompleteConstraint, AchilleConstraint
-
-parser = argparse.ArgumentParser(description='Train NN with constraints')
-parser = dl2.add_default_parser_args(parser)
-args = parser.parse_args()
-
-# We read the dataset and create an iterable.
-class Values(data.Dataset):
-    def __init__(self, filename):
-        pd_data = pd.read_csv(filename)
-        categorical_columns = ['Name', 'Surname']
-        for category in categorical_columns:
-            pd_data[category] = pd_data[category].astype('category')
-        print(pd_data['Name'].cat.categories)
-        names = pd_data['Name'].cat.codes.values.astype('int64')
-        surnames = pd_data['Surname'].cat.codes.values.astype('int64')
-        categorical_data = np.stack([names, surnames], 1)
-        
-        self.data = torch.tensor(categorical_data, dtype=torch.int64)
-        self.target = torch.tensor(pd_data['Class'].values).flatten()
-        self.n_samples = self.data.shape[0]
-    
-    def __len__(self):
-        return self.n_samples
-    
-    def __getitem__(self, index):
-        b = self.data[index], self.target[index]
-        return b
-
-class Model(nn.Module):
-    def __init__(self, n_in=2, n_hidden=20, n_out=2):
-        super(Model, self).__init__()
-         
-        self.linearlinear = nn.Sequential(
-            nn.Linear(n_in, n_hidden, bias=True),
-            nn.ReLU(),
-            nn.Linear(n_hidden, n_hidden, bias=True),
-            nn.ReLU(),
-            nn.Linear(n_hidden, n_out, bias=True),
-        )
-        self.logprob = nn.LogSoftmax(dim=1)
-    
-    def forward(self, x):
-        x = self.linearlinear(x)
-        x = self.logprob(x)
-        return x
+import config
 
 def split_dataset(dataset, batch_size, validation_split, shuffle_dataset):
     dataset_size = len(dataset)
@@ -82,6 +26,7 @@ def split_dataset(dataset, batch_size, validation_split, shuffle_dataset):
 
     return train_loader, validation_loader
 
+
 def local_constraining(oracle, model, data, target):
 
     n_batch = int(data.size()[0])
@@ -95,16 +40,14 @@ def local_constraining(oracle, model, data, target):
 
     model.eval()
 
-    _, dl2_batch_loss, _ = oracle.evaluate(x_batches, y_batches, args)
+    _, dl2_batch_loss, _ = oracle.evaluate(x_batches, y_batches, config.args)
 
     model.train()
 
     return dl2_batch_loss
 
-def train(train_loader, model, criterium, optimizer, constraint_weight, global_constraining, num_epochs):
 
-    constraint = CompleteConstraint(model, use_cuda=False, network_output='logprob')
-    oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
+def train(oracle, train_loader, model, criterium, optimizer, constraint_weight, global_constraining, num_epochs):
 
     for k, (data, target) in enumerate(train_loader):
         data_variable = Variable(data.float(), requires_grad=False)
@@ -163,42 +106,23 @@ def evaluate(validation_loader, model, criterium):
         print('Accuracy score: {:.4f}'.format(accuracy_score(target, y_val)))
         return accuracy_score(target, y_val)
 
-def run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output):
+def run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output):
 
     torch.manual_seed(random_seed)
     np.random.seed(random_seed)
     random.seed(random_seed)
 
-    dataset = Values(dataset_path)
-
     train_loader, validation_loader = split_dataset(dataset, batch_size=200, validation_split=0.2, shuffle_dataset=True)
     
-    model = Model()
     print(model)
     criterium = nn.NLLLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
     for k in range(num_epochs):
         print('Training epoch number {:d}'.format(k))
-        train(train_loader, model, criterium, optimizer, constraint_weight, global_constraining, num_epochs)
+        train(oracle, train_loader, model, criterium, optimizer, constraint_weight, global_constraining, num_epochs)
 
     if save_output:
         torch.save(model.state_dict(), model_path)
 
     return evaluate(validation_loader, model, criterium)
-            
-if __name__ == '__main__':
-    # path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified.csv'
-    # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_base.ph'
-    # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained.ph'
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified.csv'
-    # model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_base.ph'
-    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained_complete.ph'
-    save_output = True
-    constraint_weight = 0.1
-    global_constraining = True
-    num_epochs = 10
-    random_seed_base = 41
-    num_runs = 1
-    results = [run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i, model_path, save_output) for i in range(num_runs)]
-    print('Mean accuracy for {:d} runs: {:.4f}'.format(num_runs, sum(results) / len(results)))
