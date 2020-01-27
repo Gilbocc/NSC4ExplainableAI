@@ -8,8 +8,8 @@ import pandas as pd
 from common.oracle import DL2_Oracle
 import dl2lib as dl2
 from common.constraint import Constraint
-from training import run
-import config
+from common.training import run
+import common.config as config
 
 
 class Values(data.Dataset):
@@ -66,8 +66,8 @@ class DummyConstraint(Constraint):
     def get_condition(self, x, y):
 
         rules = [
-            dl2.Implication(dl2.BoolConst(torch.FloatTensor([1, 0, 2]) == 1), dl2.LT(y[0], y[1])),
-            dl2.Implication(dl2.BoolConst(torch.FloatTensor([1, 0, 2]) == 1), dl2.LT(y[1], y[0]))
+            dl2.Implication(dl2.BoolConst(torch.FloatTensor(1) == 1), dl2.LT(y[0], y[1])),
+            dl2.Implication(dl2.BoolConst(torch.FloatTensor(1) == 1), dl2.LT(y[1], y[0]))
         ]
 
         return dl2.And(rules)
@@ -78,7 +78,7 @@ def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, 
     model = Model()
     constraint = DummyConstraint(model, use_cuda=False, network_output='logprob')
     oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
-    run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output)
+    return run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output)
 
 
 parser = argparse.ArgumentParser(description='Experiment votes')
@@ -87,7 +87,7 @@ args = parser.parse_args()
 config.args = args
             
 if __name__ == '__main__':
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\NSC4ExplainableAI\NetworkConstraining\DL2\test\house-votes-84_parsed.csv'
+    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\house-votes-84_parsed.csv'
     model_path = r''
     save_output = False
     constraint_weight = 0.0

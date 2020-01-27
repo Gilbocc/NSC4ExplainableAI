@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.utils.data as data
 from torch.utils.data.sampler import SubsetRandomSampler
-import config
+from . import config
 
 def split_dataset(dataset, batch_size, validation_split, shuffle_dataset):
     dataset_size = len(dataset)

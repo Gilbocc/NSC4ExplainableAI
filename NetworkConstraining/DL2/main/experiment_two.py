@@ -8,8 +8,8 @@ import pandas as pd
 from common.oracle import DL2_Oracle
 import dl2lib as dl2
 from common.constraint import Constraint
-from training import run
-import config
+from common.training import run
+import common.config as config
 
 
 class Values(data.Dataset):
@@ -107,7 +107,7 @@ def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, 
     model = Model()
     constraint = CompleteConstraint(model, use_cuda=False, network_output='logprob')
     oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
-    run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output)
+    return run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output)
 
 
 parser = argparse.ArgumentParser(description='Experiment One')
