@@ -42,29 +42,24 @@ def load_model(model_path):
 
 def run(model_path, theory_path):
     model = load_model(model_path)
-    
-    theory = []
+    theory = ['has{:s}({:s}) :- X{:s} = 1.\n'.format(y, ','.join(['X' + x for x in FEATURES]), y) for y in FEATURES]
     for elem in generate_data():
         with torch.no_grad():
             data = Variable(torch.FloatTensor([elem]), requires_grad=False)
             c = model(data)
             y_val = np.argmax(c, axis=1)
             print(elem, ' ---> ', y_val.item(), elem[10] == 1 and elem[15] == 0 and elem[25] == 1)
-            # Convert result to prolog
-            theory.append('class({:d}).\n'.format(y_val.item()))
-            theory.append('name({:s}).\n'.format(elem[0].lower()))
-            theory.append('surname({:s}).\n'.format(elem[1].lower()))
-            theory.append('nameWithClass({:s},{:d}).\n'.format(elem[0].lower(), y_val.item()))
-            theory.append('surnameWithClass({:s},{:d}).\n'.format(elem[1].lower(), y_val.item()))
-            theory.append('person({:s},{:s}).\n'.format(elem[0].lower(), elem[1].lower()))
-            theory.append('classification({:s},{:s},{:d}).\n'.format(elem[0].lower(), elem[1].lower(), y_val.item()))
+            if y_val.item() == 1:
+                theory.append('isA({:s}).\n'.format(','.join(map(str, elem))))
+            else:
+                theory.append('isB({:s}).\n'.format(','.join(map(str, elem))))
 
     # Salvare su file
-    # with open(theory_path, 'w+') as theory_file:
-    #     theory_file.writelines(list(dict.fromkeys(theory)))
+    with open(theory_path, 'w+') as theory_file:
+        theory_file.writelines(list(dict.fromkeys(theory)))
             
 
 if __name__ == '__main__':
     model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset_model_base.ph'
-    theory_path = r''
+    theory_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset_theory_base.pl'
     run(model_path, theory_path)
