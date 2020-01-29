@@ -9,4 +9,4 @@ python -m ntp.scripts.generate_dataset C:/Users/giuseppe.pisano/Documents/MyProj
 python -m ntp.scripts.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/NSC4ExplainableAI/LogicInduction/NTP-improved/conf_synth/induction.conf
 
 
-python -m ntp.scripts.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/NSC4ExplainableAI/LogicInduction/NTP-improved/conf_synth/constraining.conf
+python -m ntp.scripts.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/University/NSC4ExplainableAI/LogicInduction/NTP-improved/conf_synth/experiment_two.conf

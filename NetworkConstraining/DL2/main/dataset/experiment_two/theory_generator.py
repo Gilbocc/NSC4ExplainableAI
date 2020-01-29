@@ -42,7 +42,9 @@ def load_model(model_path):
 
 def run(model_path, theory_path):
     model = load_model(model_path)
-    theory = ['has{:s}({:s}) :- X{:s} = 1.\n'.format(y, ','.join(['X' + x for x in FEATURES]), y) for y in FEATURES]
+    ok = ['ok(true).\n'] + ['has{:s}({:s}) :- ok({:s}).\n'.format(y, ','.join(['X' + x for x in FEATURES]), 'X' + y) for y in FEATURES]
+    notOk = ['notOk(false).\n'] + ['hasNot{:s}({:s}) :- notOk({:s}).\n'.format(y, ','.join(['X' + x for x in FEATURES]), 'X' + y) for y in FEATURES]
+    theory = ok + notOk
     for elem in generate_data():
         with torch.no_grad():
             data = Variable(torch.FloatTensor([elem]), requires_grad=False)
@@ -50,9 +52,9 @@ def run(model_path, theory_path):
             y_val = np.argmax(c, axis=1)
             print(elem, ' ---> ', y_val.item(), elem[10] == 1 and elem[15] == 0 and elem[25] == 1)
             if y_val.item() == 1:
-                theory.append('isA({:s}).\n'.format(','.join(map(str, elem))))
+                theory.append('isA({:s}).\n'.format(','.join(map(lambda x: 'false' if x == 0 else 'true', elem))))
             else:
-                theory.append('isB({:s}).\n'.format(','.join(map(str, elem))))
+                theory.append('isB({:s}).\n'.format(','.join(map(lambda x: 'false' if x == 0 else 'true', elem))))
 
     # Salvare su file
     with open(theory_path, 'w+') as theory_file:

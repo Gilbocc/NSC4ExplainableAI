@@ -337,7 +337,8 @@ def or_(kb, goals, substitutions=dict(), depth=0, mask=None,
 
         
         if is_fact and k_max is not None:
-            new_success, success_indices = tf.nn.top_k(substitutions_["SUCCESS"], k_max)
+            k_m = k_max if substitutions_["SUCCESS"].shape[1] >= k_max else substitutions_["SUCCESS"].shape[1]
+            new_success, success_indices = tf.nn.top_k(substitutions_["SUCCESS"], k_m)
             substitutions_["SUCCESS"] = new_success
             for value in substitutions_['VARSUBS'].values():
                 if value['struct'] != 'goal' and not 'subset' in value:

@@ -87,12 +87,14 @@ def gen_train_batches(fact_structs, kb_ids, batch_size, num_corruptions, constan
         facts_processed = 0
         while facts_processed + batch_size < n_facts_total:
             batch = gen_batch(list_dict, slice(facts_processed, facts_processed + batch_size))
-            struct_batches.append(batch)
+            if len([value for value in batch["mask_indices"] if value is not None]) != 0:
+                struct_batches.append(batch)
             facts_processed += batch_size
-        
+
         if facts_processed < n_facts_total:
             batch = gen_batch(list_dict, slice(facts_processed, n_facts_total))
-            struct_batches.append(batch)
+            if len([value for value in batch["mask_indices"] if value is not None]) != 0:
+                struct_batches.append(batch)
 
         for batch in struct_batches:
             batch["goal"] = [[fact[k] for fact in batch["goal"]] for k in range(struct_order + 1)]
