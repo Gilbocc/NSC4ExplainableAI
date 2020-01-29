@@ -15,15 +15,8 @@ import common.config as config
 class Values(data.Dataset):
     def __init__(self, filename):
         pd_data = pd.read_csv(filename)
-        categorical_columns = ['Name', 'Surname']
-        for category in categorical_columns:
-            pd_data[category] = pd_data[category].astype('category')
-        print(pd_data['Name'].cat.categories)
-        names = pd_data['Name'].cat.codes.values.astype('int64')
-        surnames = pd_data['Surname'].cat.codes.values.astype('int64')
-        categorical_data = np.stack([names, surnames], 1)
-        
-        self.data = torch.tensor(categorical_data, dtype=torch.int64)
+        features = np.stack([pd_data[str(x)].values for x in range(1, 31)], 1)
+        self.data = torch.tensor(features, dtype=torch.int64)
         self.target = torch.tensor(pd_data['Class'].values).flatten()
         self.n_samples = self.data.shape[0]
     
@@ -36,7 +29,7 @@ class Values(data.Dataset):
 
 
 class Model(nn.Module):
-    def __init__(self, n_in=2, n_hidden=20, n_out=2):
+    def __init__(self, n_in=30, n_hidden=20, n_out=2):
         super(Model, self).__init__()
          
         self.linearlinear = nn.Sequential(
@@ -54,7 +47,7 @@ class Model(nn.Module):
         return x
 
 
-class AchilleConstraint(Constraint):
+class BaseConstraint(Constraint):
 
     def __init__(self, net, use_cuda=True, network_output='logits'):
         self.net = net
@@ -62,70 +55,48 @@ class AchilleConstraint(Constraint):
         self.use_cuda = use_cuda
         self.n_tvars = 1
         self.n_gvars = 0
-        self.name = 'DummyL'
-        self.names = {
-            'Achille' : 0,
-            'Pino' : 1,
-            'Zenio' : 2
-        }
+        self.name = 'BaseConstraint'
 
     def params(self):
         return {'network_output' : self.network_output}
 
     def get_neighbor(self, x, y, index):
-        # item = torch.tensor([x.data[0], x.data[1] + index])
-        item = torch.tensor([x.data[0], random.randint(0, 100000)])
-        classification = torch.tensor(1, dtype=torch.float) if x.data[0] == self.names['Achille'] or x.data[0] == self.names['Zenio'] else torch.tensor(0, dtype=torch.float)
+        item = [random.randint(0, 1) for y in range(0, 30)]
+        item[10] = x.data[10]
+        item[15] = x.data[15]
+        item[25] = x.data[25]
+        item = torch.tensor(item)
+        classification = torch.tensor(1, dtype=torch.float) if x.data[10] == 1 and x.data[15] == 0 and x.data[25] == 1 else torch.tensor(0, dtype=torch.float)
         return (item, classification)
 
     def get_condition(self, x, y):
-        a = dl2.EQ(x[0], torch.tensor(self.names['Achille'], dtype=torch.float))
-        return dl2.Implication(a, dl2.LT(y[0], y[1]))
-
-
-class CompleteConstraint(AchilleConstraint):
-
-    def __init__(self, net, use_cuda=True, network_output='logits'):
-        super().__init__(net, use_cuda, network_output)
-
-    def get_condition(self, x, y):
-        a = dl2.EQ(x[0], torch.tensor(self.names['Achille'], dtype=torch.float))
-        b = dl2.EQ(x[0], torch.tensor(self.names['Pino'], dtype=torch.float))
-        c = dl2.EQ(x[0], torch.tensor(self.names['Zenio'], dtype=torch.float))
-
-        rules = [
-            dl2.Implication(a, dl2.LT(y[0], y[1])),
-            dl2.Implication(b, dl2.LT(y[1], y[0])),
-            dl2.Implication(c, dl2.LT(y[0], y[1]))
-        ]
-
-        return dl2.And(rules)
+        a = dl2.EQ(x[10], torch.tensor(1, dtype=torch.float))
+        b = dl2.EQ(x[15], torch.tensor(0, dtype=torch.float))
+        c = dl2.EQ(x[25], torch.tensor(1, dtype=torch.float))
+        condition = dl2.And([a, b, c])
+        return dl2.Implication(condition, dl2.LT(y[0], y[1]))
 
 
 def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output):
     dataset = Values(dataset_path)
     model = Model()
-    constraint = CompleteConstraint(model, use_cuda=False, network_output='logprob')
+    constraint = BaseConstraint(model, use_cuda=False, network_output='logprob')
     oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
     return run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output)
 
 
-parser = argparse.ArgumentParser(description='Experiment One')
+parser = argparse.ArgumentParser(description='Experiment Two')
 parser = dl2.add_default_parser_args(parser)
 args = parser.parse_args()
 config.args = args
 
 if __name__ == '__main__':
-    # path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified.csv'
-    # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_base.ph'
-    # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained.ph'
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified.csv'
-    # model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_base.ph'
-    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\output_simplified_model_constrained_complete.ph'
+    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset.csv'
+    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset_model_base.ph'
     save_output = True
-    constraint_weight = 0.1
+    constraint_weight = 0.0
     global_constraining = True
-    num_epochs = 10
+    num_epochs = 100
     random_seed_base = 41
     num_runs = 1
     results = [local_run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i, model_path, save_output) for i in range(num_runs)]

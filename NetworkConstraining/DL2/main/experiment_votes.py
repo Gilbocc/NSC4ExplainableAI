@@ -87,7 +87,7 @@ args = parser.parse_args()
 config.args = args
             
 if __name__ == '__main__':
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\house-votes-84_parsed.csv'
+    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_votes\house-votes-84_parsed.csv'
     model_path = r''
     save_output = False
     constraint_weight = 0.0
