@@ -52,7 +52,7 @@ def run_from_model(model_path, theory_path):
             data = Variable(torch.FloatTensor([elem]), requires_grad=False)
             c = model(data)
             y_val = np.argmax(c, axis=1)
-            print(elem, ' ---> ', y_val.item(), elem[10] == 1 and elem[15] == 0 and elem[25] == 1)
+            print(elem, ' ---> ', y_val.item(), elem[10] == 1)
             if y_val.item() == 1:
                 theory.append('isA({:s}).\n'.format(','.join(map(lambda x: 'false' if x == 0 else 'true', elem))))
             else:

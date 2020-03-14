@@ -297,3 +297,4 @@ __pycache__/
 
 # Anaconda environment
 envs
+logs

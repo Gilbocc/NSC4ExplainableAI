@@ -4,7 +4,7 @@ This repository contains an implementation of the work from "AI simbolica e sub-
 
 ## Installation
 
-**Tensorflow GPU** library is required to run the code correctly. You can find all the details on the needed requirements [here](https://www.tensorflow.org/install/gpu).
+**Tensorflow GPU** library is required to run the project correctly. You can find all the details on the needed requirements [here](https://www.tensorflow.org/install/gpu).
 
 0 - Install Anaconda
 
@@ -30,29 +30,29 @@ This repository contains an implementation of the work from "AI simbolica e sub-
 
 ## Usage
 
-C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2
-
 ### Experiment one (**unbalance**)
+
+You need to replace *ACTUAL_PATH* with the absolute path to the folder where the project has been cloned 
 
 Model/dataset to Prolog theory translation
 
     python ./main/dataset/experiment_one/theory_generator.py --model_path ACTUAL_PATH/main/dataset/experiment_one/output_model.ph --dataset_path ACTUAL_PATH/main/dataset/experiment_one/dataset_final.csv --theory_path ACTUAL_PATH/main/dataset/experiment_one/theory.pl --is_model False/True
 
-Rules *induction*
+Rules induction
 
     python ./main/induction/find_logic.py --config_path ACTUAL_PATH/main/induction/config/experiments_config.conf --theory_path ACTUAL_PATH/main/dataset/experiment_one/theory.pl --rules_template_path ACTUAL_PATH/main/dataset/experiment_one/rules_templates.pl --rules_path ACTUAL_PATH/main/dataset/experiment_one/rules.pl
 
 Network training (*No constraining*)
 
-    python ./main/network/experiment_one.py --path ACTUAL_PATH\main\dataset\experiment_one\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_one\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining False --num_epochs 50 --random_seed_base 41 --num_runs 5
+    python ./main/network/experiment_one.py --path ACTUAL_PATH\main\dataset\experiment_one\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_one\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining False --num_epochs 50 --random_seed_base 41 --num_runs 1
 
 Network training (*Local constraining*)
 
-    python ./main/network/experiment_one.py --path ACTUAL_PATH\main\dataset\experiment_one\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_one\output_model.ph --save_output True --constraint_weight 0.1 --global_constraining False --num_epochs 50 --random_seed_base 41 --num_runs 5
+    python ./main/network/experiment_one.py --path ACTUAL_PATH\main\dataset\experiment_one\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_one\output_model.ph --save_output True --constraint_weight 0.7 --global_constraining False --num_epochs 50 --random_seed_base 41 --num_runs 1
 
 Network training (*Global constraining*)
 
-    python ./main/network/experiment_one.py --path ACTUAL_PATH\main\dataset\experiment_one\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_one\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining True --num_epochs 10 --random_seed_base 41 --num_runs 5
+    python ./main/network/experiment_one.py --path ACTUAL_PATH\main\dataset\experiment_one\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_one\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining True --num_epochs 10 --random_seed_base 41 --num_runs 1
 
 ### Experiment two (**dimensionality**)
 
@@ -60,21 +60,21 @@ Model/dataset to Prolog theory translation
 
     python ./main/dataset/experiment_two/theory_generator.py --model_path ACTUAL_PATH/main/dataset/experiment_two/output_model.ph --dataset_path ACTUAL_PATH/main/dataset/experiment_two/dataset_final.csv --theory_path ACTUAL_PATH/main/dataset/experiment_two/theory.pl --is_model False/True
 
-Rules *induction* 
+Rules induction
 
     python ./main/induction/find_logic.py --config_path ACTUAL_PATH/main/induction/config/experiments_config.conf --theory_path ACTUAL_PATH/main/dataset/experiment_two/theory.pl --rules_template_path ACTUAL_PATH/main/dataset/experiment_two/rules_templates.nlt --rules_path ACTUAL_PATH/main/dataset/experiment_two/rules.pl
 
 Network training (*No constraining*)
 
-    python ./main/network/experiment_two.py --path ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_two\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining False --num_epochs 100 --random_seed_base 41 --num_runs 5
+    python ./main/network/experiment_two.py --path ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_two\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining False --num_epochs 100 --random_seed_base 41 --num_runs 1
 
 Network training (*Local constraining*)
 
-    python ./main/network/experiment_two.py --path ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_two\output_model.ph --save_output True --constraint_weight 0.1 --global_constraining False --num_epochs 100 --random_seed_base 41 --num_runs 5
+    python ./main/network/experiment_two.py --path ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_two\output_model.ph --save_output True --constraint_weight 0.2 --global_constraining False --num_epochs 100 --random_seed_base 41 --num_runs 1
 
 Network training (*Global constraining*)
 
-    python ./main/network/experiment_two.py --path ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_two\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining True --num_epochs 35 --random_seed_base 41 --num_runs 5
+    python ./main/network/experiment_two.py --path ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_two\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining True --num_epochs 40 --random_seed_base 41 --num_runs 1
 
 ## Credits
 
