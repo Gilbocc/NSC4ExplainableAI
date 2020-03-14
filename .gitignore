@@ -294,3 +294,6 @@ __pycache__/
 .vscode
 
 *.swp
+
+envs
+logs
