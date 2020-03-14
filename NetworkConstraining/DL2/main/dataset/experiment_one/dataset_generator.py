@@ -20,7 +20,7 @@ def generate_data():
     
     people = list(map(lambda x : (x[0], x[1]), people))
     def logic(person):
-        if person[0] == 'Zenio' or person[0] == 'Achille' : return 1
+        if person[0] == 'Achille' : return 1
         return 0
 
     labelled_people = list(map(lambda x : (x[0], x[1], logic(x)), people))
@@ -28,7 +28,7 @@ def generate_data():
     return labelled_people
 
 if __name__ == '__main__':
-    with open('output_simplified.csv', 'w', newline='') as file:
+    with open('output_final.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Surname", "Class"])
         for i in generate_data():

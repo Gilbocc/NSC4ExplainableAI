@@ -63,18 +63,18 @@ class BaseConstraint(Constraint):
     def get_neighbor(self, x, y, index):
         item = [random.randint(0, 1) for y in range(0, 30)]
         item[10] = x.data[10]
-        item[15] = x.data[15]
-        item[25] = x.data[25]
+        # item[15] = x.data[15]
+        # item[25] = x.data[25]
         item = torch.tensor(item)
-        classification = torch.tensor(1, dtype=torch.float) if x.data[10] == 1 and x.data[15] == 0 and x.data[25] == 1 else torch.tensor(0, dtype=torch.float)
+        classification = torch.tensor(1, dtype=torch.float) if x.data[10] == 1 else torch.tensor(0, dtype=torch.float)
         return (item, classification)
 
     def get_condition(self, x, y):
         a = dl2.EQ(x[10], torch.tensor(1, dtype=torch.float))
-        b = dl2.EQ(x[15], torch.tensor(0, dtype=torch.float))
-        c = dl2.EQ(x[25], torch.tensor(1, dtype=torch.float))
-        condition = dl2.And([a, b, c])
-        return dl2.Implication(condition, dl2.LT(y[0], y[1]))
+        # b = dl2.EQ(x[15], torch.tensor(0, dtype=torch.float))
+        # c = dl2.EQ(x[25], torch.tensor(1, dtype=torch.float))
+        # condition = dl2.And([a, b, c])
+        return dl2.Implication(a, dl2.LT(y[0], y[1]))
 
 
 def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output):
@@ -91,8 +91,8 @@ args = parser.parse_args()
 config.args = args
 
 if __name__ == '__main__':
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset.csv'
-    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset_model_base.ph'
+    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset_final.csv'
+    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset_model_final_no_constraining.ph'
     save_output = True
     constraint_weight = 0.0
     global_constraining = True

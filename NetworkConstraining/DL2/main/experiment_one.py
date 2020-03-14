@@ -74,8 +74,8 @@ class AchilleConstraint(Constraint):
 
     def get_neighbor(self, x, y, index):
         # item = torch.tensor([x.data[0], x.data[1] + index])
-        item = torch.tensor([x.data[0], random.randint(0, 100000)])
-        classification = torch.tensor(1, dtype=torch.float) if x.data[0] == self.names['Achille'] or x.data[0] == self.names['Zenio'] else torch.tensor(0, dtype=torch.float)
+        item = torch.tensor([x.data[0], random.randint(10000, 100000)])
+        classification = torch.tensor(1, dtype=torch.float) if x.data[0] == self.names['Achille'] else torch.tensor(0, dtype=torch.float)
         return (item, classification)
 
     def get_condition(self, x, y):
@@ -105,7 +105,7 @@ class CompleteConstraint(AchilleConstraint):
 def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output):
     dataset = Values(dataset_path)
     model = Model()
-    constraint = CompleteConstraint(model, use_cuda=False, network_output='logprob')
+    constraint = AchilleConstraint(model, use_cuda=False, network_output='logprob')
     oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
     return run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output)
 
@@ -119,14 +119,14 @@ if __name__ == '__main__':
     # path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified.csv'
     # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified_model_base.ph'
     # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified_model_constrained.ph'
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified.csv'
+    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_final.csv'
     # model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified_model_base.ph'
-    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified_model_constrained_complete.ph'
+    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_final_model_local_constraining.ph'
     save_output = True
-    constraint_weight = 0.1
+    constraint_weight = 0.0
     global_constraining = True
     num_epochs = 10
     random_seed_base = 41
-    num_runs = 1
+    num_runs = 5
     results = [local_run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i, model_path, save_output) for i in range(num_runs)]
     print('Mean accuracy for {:d} runs: {:.4f}'.format(num_runs, sum(results) / len(results)))

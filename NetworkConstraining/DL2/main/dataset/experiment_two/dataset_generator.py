@@ -6,7 +6,8 @@ TARGET = "Class"
 NUM_ROWS = 1000
 
 def logic(row):
-    if row[10] == 1 and row[15] == 0 and row[25] == 1 : return 1
+    # if row[10] == 1 and row[15] == 0 and row[25] == 1 : return 1
+    if row[10] == 1: return 1
     return 0
 
 def generate_data():
@@ -16,7 +17,7 @@ def generate_data():
     return labelled_data
 
 if __name__ == '__main__':
-    with open('dataset.csv', 'w', newline='') as file:
+    with open('dataset_final.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(FEATURES + [TARGET])
         for i in generate_data():
