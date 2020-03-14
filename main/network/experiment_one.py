@@ -112,14 +112,14 @@ def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, 
 
 parser = argparse.ArgumentParser(description='Experiment One')
 parser = dl2.add_default_parser_args(parser)
-parser.add_argument("path", type=str)
-parser.add_argument("model_path", type=str)
-parser.add_argument("save_output", type=bool)
-parser.add_argument("constraint_weight", type=float)
-parser.add_argument("global_constraining", type=bool)
-parser.add_argument("num_epochs", type=int)
-parser.add_argument("random_seed_base", type=int)
-parser.add_argument("num_runs", type=int)
+parser.add_argument("--path", type=str)
+parser.add_argument("--model_path", type=str)
+parser.add_argument("--save_output", type=str)
+parser.add_argument("--constraint_weight", type=str)
+parser.add_argument("--global_constraining", type=str)
+parser.add_argument("--num_epochs", type=str)
+parser.add_argument("--random_seed_base", type=str)
+parser.add_argument("--num_runs", type=str)
 args = parser.parse_args()
 config.args = args
 
@@ -138,11 +138,12 @@ if __name__ == '__main__':
     # num_runs = 5
     path = args.path
     model_path = args.model_path
-    save_output = args.save_output
-    constraint_weight = args.constraint_weight
-    global_constraining = args.global_constraining
-    num_epochs = args.num_epochs
-    random_seed_base = args.random_seed_base
-    num_runs = args.num_runs
+    save_output = args.save_output == 'True'
+    constraint_weight = float(args.constraint_weight)
+    global_constraining = args.global_constraining == 'True'
+    num_epochs = int(args.num_epochs)
+    random_seed_base = int(args.random_seed_base)
+    num_runs = int(args.num_runs)
+    print(constraint_weight)
     results = [local_run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i, model_path, save_output) for i in range(num_runs)]
     print('Mean accuracy for {:d} runs: {:.4f}'.format(num_runs, sum(results) / len(results)))

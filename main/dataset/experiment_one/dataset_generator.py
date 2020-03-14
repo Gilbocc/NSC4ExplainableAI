@@ -9,8 +9,7 @@ def random_strings(number, max_length):
     return [random_string(random.randint(4, max_length)).capitalize() for x in range (0, number)]
 
 def generate_data():
-    # Con 100
-    num_surnames = 10000
+    num_surnames = 500
     num_names = 2
     surnames = random_strings(num_surnames, 10)
     names = ['Pino', 'Zenio']

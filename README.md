@@ -38,9 +38,9 @@ Model/dataset to Prolog theory translation
 
     python ./main/dataset/experiment_one/theory_generator.py --model_path ACTUAL_PATH/main/dataset/experiment_one/output_model.ph --dataset_path ACTUAL_PATH/main/dataset/experiment_one/dataset_final.csv --theory_path ACTUAL_PATH/main/dataset/experiment_one/theory.pl --is_model False/True
 
-Induction on *training data* 
+Rules *induction*
 
-    python -m main.induction.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/University/NSC4ExplainableAI/main/config/experiment_one.conf
+    python ./main/induction/find_logic.py --config_path ACTUAL_PATH/main/induction/config/experiments_config.conf --theory_path ACTUAL_PATH/main/dataset/experiment_one/theory.pl --rules_template_path ACTUAL_PATH/main/dataset/experiment_one/rules_templates.pl --rules_path ACTUAL_PATH/main/dataset/experiment_one/rules.pl
 
 Network training (*No constraining*)
 
@@ -54,19 +54,15 @@ Network training (*Global constraining*)
 
     python ./main/network/experiment_one.py --path ACTUAL_PATH\main\dataset\experiment_one\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_one\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining True --num_epochs 10 --random_seed_base 41 --num_runs 5
 
-Induction on *network predictions*
-
-    python -m main.induction.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/University/NSC4ExplainableAI/main/config/experiment_one.conf
-
 ### Experiment two (**dimensionality**)
 
 Model/dataset to Prolog theory translation
 
     python ./main/dataset/experiment_two/theory_generator.py --model_path ACTUAL_PATH/main/dataset/experiment_two/output_model.ph --dataset_path ACTUAL_PATH/main/dataset/experiment_two/dataset_final.csv --theory_path ACTUAL_PATH/main/dataset/experiment_two/theory.pl --is_model False/True
 
-Induction on *training data* 
+Rules *induction* 
 
-    LALALALA
+    python ./main/induction/find_logic.py --config_path ACTUAL_PATH/main/induction/config/experiments_config.conf --theory_path ACTUAL_PATH/main/dataset/experiment_two/theory.pl --rules_template_path ACTUAL_PATH/main/dataset/experiment_two/rules_templates.nlt --rules_path ACTUAL_PATH/main/dataset/experiment_two/rules.pl
 
 Network training (*No constraining*)
 
@@ -79,10 +75,6 @@ Network training (*Local constraining*)
 Network training (*Global constraining*)
 
     python ./main/network/experiment_two.py --path ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv --model_path ACTUAL_PATH\main\dataset\experiment_two\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining True --num_epochs 35 --random_seed_base 41 --num_runs 5
-
-Induction on *network predictions*
-
-    LALALALA
 
 ## Credits
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 import argparse
 import random
@@ -7,7 +5,6 @@ import re
 from collections import OrderedDict
 import datetime
 import sys
-
 import tensorflow as tf
 import numpy as np
 from sklearn import metrics
@@ -32,19 +29,26 @@ def read_list_from_file(path):
     with open(path, "r") as f:
         return f.readlines()
 
+parser = argparse.ArgumentParser(description='Rules finder')
+parser.add_argument("--config_path", type=str)
+parser.add_argument("--theory_path", type=str)
+parser.add_argument("--rules_template_path", type=str)
+parser.add_argument("--rules_path", type=str)
+args = parser.parse_args()
+
+
 if __name__ == '__main__':
 
     tf.test.is_built_with_cuda()
     tf.enable_eager_execution()
-
     print("GPUs Available: ", get_available_gpus())
 
-    path = sys.argv[1]
-
-    conf = load_conf(path)
+    conf = load_conf(args.config_path)
+    conf["data"]["data_path"] = args.theory_path
+    conf["data"]["rule_path"] = args.rules_template_path
+    conf["data"]["target_path"] = args.rules_path
 
     base_seed = conf["experiment"]["base_seed"]
-
     random.seed(base_seed)
     np.random.seed(base_seed)
 
@@ -61,7 +65,6 @@ if __name__ == '__main__':
         eval_history[key] = list()
     auc_helper_list = list()
     
-
     conf["logging"]["log_dir"] = base_dir + "run/"
     conf["training"]["seed"] = base_seed
 
