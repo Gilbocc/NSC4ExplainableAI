@@ -5,6 +5,7 @@ import os
 import random
 import string
 import numpy as np
+import argparse
 
 FEATURES = [str(x) for x in range(1, 31)]
 NUM_ROWS = 100
@@ -40,7 +41,7 @@ def load_model(model_path):
     return model
 
 
-def run(model_path, theory_path):
+def run_from_model(model_path, theory_path):
     model = load_model(model_path)
     ok = ['ok(true).\n'] + ['has{:s}({:s}) :- ok({:s}).\n'.format(y, ','.join(['X' + x for x in FEATURES]), 'X' + y) for y in FEATURES]
     notOk = ['notOk(false).\n'] + ['hasNot{:s}({:s}) :- notOk({:s}).\n'.format(y, ','.join(['X' + x for x in FEATURES]), 'X' + y) for y in FEATURES]
@@ -59,9 +60,38 @@ def run(model_path, theory_path):
     # Salvare su file
     with open(theory_path, 'w+') as theory_file:
         theory_file.writelines(list(dict.fromkeys(theory)))
+
+def run_from_csv(dataset_path, theory_path):
+
+    def load_data():
+        pd_data = pd.read_csv(dataset_path)
+        return pd_data.iterrows()
+
+    ok = ['ok(true).\n'] + ['has{:s}({:s}) :- ok({:s}).\n'.format(y, ','.join(['X' + x for x in FEATURES]), 'X' + y) for y in FEATURES]
+    notOk = ['notOk(false).\n'] + ['hasNot{:s}({:s}) :- notOk({:s}).\n'.format(y, ','.join(['X' + x for x in FEATURES]), 'X' + y) for y in FEATURES]
+    theory = ok + notOk
+    theory = []
+    for index, elem in load_data():
+        data = [elem[y] for y in FEATURES]
+        if elem['Class'] == 1:
+                theory.append('isA({:s}).\n'.format(','.join(map(lambda x: 'false' if x == 0 else 'true', data))))
+        else:
+            theory.append('isB({:s}).\n'.format(','.join(map(lambda x: 'false' if x == 0 else 'true', data))))
+
+
+    # Salvare su file
+    with open(theory_path, 'w+') as theory_file:
+        theory_file.writelines(list(dict.fromkeys(theory)))
             
+parser = argparse.ArgumentParser(description='Experiment two theory generator')
+parser.add_argument("model_path", type=str)
+parser.add_argument("dataset_path", type=str)
+parser.add_argument("theory_path", type=str)
+parser.add_argument("is_model", type=bool)
+args = parser.parse_args()
 
 if __name__ == '__main__':
-    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset_model_base.ph'
-    theory_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_two\dataset_theory_base.pl'
-    run(model_path, theory_path)
+    if args.is_model:
+        run_from_model(args.model_path, args.theory_path)
+    else:
+        run_from_csv(args.dataset_path, args.theory_path)

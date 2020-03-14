@@ -4,6 +4,8 @@ This repository contains an implementation of the work from "AI simbolica e sub-
 
 ## Installation
 
+**Tensorflow GPU** library is required to run the code correctly. You can find all the details on the needed requirements [here](https://www.tensorflow.org/install/gpu).
+
 0 - Install Anaconda
 
 1 - Create the virtual environment
@@ -28,7 +30,59 @@ This repository contains an implementation of the work from "AI simbolica e sub-
 
 ## Usage
 
-python -m ntp.scripts.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/University/NSC4ExplainableAI/LogicInduction/NTP-improved/conf_synth/experiment_two.conf
+C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2
+
+### Experiment one (**unbalance**)
+
+Model/dataset to Prolog theory translation
+
+    python ./main/dataset/experiment_one/theory_generator.py model_path=ACTUAL_PATH/main/dataset/experiment_one/output_model.ph dataset_path=ACTUAL_PATH/main/dataset/experiment_one/output_final.csv theory_path=ACTUAL_PATH/main/dataset/experiment_one/theory.pl is_model=False/True
+
+Induction on *training data* 
+
+    python -m main.induction.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/University/NSC4ExplainableAI/main/config/experiment_one.conf
+
+Network training (*No constraining*)
+
+    python ./main/network/experiment_one.py path=ACTUAL_PATH\main\dataset\experiment_one\output_final.csv model_path=ACTUAL_PATH\main\dataset\experiment_one\output_model.ph save_output=True constraint_weight=0.0 global_constraining=False num_epochs=50 random_seed_base=41 num_runs=5
+
+Network training (*Local constraining*)
+
+    python ./main/network/experiment_one.py path=ACTUAL_PATH\main\dataset\experiment_one\output_final.csv model_path=ACTUAL_PATH\main\dataset\experiment_one\output_model.ph save_output=True constraint_weight=0.1 global_constraining=False num_epochs=50 random_seed_base=41 num_runs=5
+
+Network training (*Global constraining*)
+
+    python ./main/network/experiment_one.py path=ACTUAL_PATH\main\dataset\experiment_one\output_final.csv model_path=ACTUAL_PATH\main\dataset\experiment_one\output_model.ph save_output=True constraint_weight=0.0 global_constraining=True num_epochs=10 random_seed_base=41 num_runs=5
+
+Induction on *network predictions*
+
+    python -m main.induction.find_logic C:/Users/giuseppe.pisano/Documents/MyProjects/University/NSC4ExplainableAI/main/config/experiment_one.conf
+
+### Experiment two (**dimensionality**)
+
+Model/dataset to Prolog theory translation
+
+    python ./main/dataset/experiment_two/theory_generator.py model_path=ACTUAL_PATH/main/dataset/experiment_two/output_model.ph dataset_path=ACTUAL_PATH/main/dataset/experiment_two/dataset_final.csv theory_path=ACTUAL_PATH/main/dataset/experiment_two/theory.pl is_model=False/True
+
+Induction on *training data* 
+
+    LALALALA
+
+Network training (*No constraining*)
+
+    python ./main/network/experiment_two.py path=ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv model_path=ACTUAL_PATH\main\dataset\experiment_two\output_model.ph save_output=True constraint_weight=0.0 global_constraining=False num_epochs=100 random_seed_base=41 num_runs=5
+
+Network training (*Local constraining*)
+
+    python ./main/network/experiment_two.py path=ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv model_path=ACTUAL_PATH\main\dataset\experiment_two\output_model.ph save_output=True constraint_weight=0.1 global_constraining=False num_epochs=100 random_seed_base=41 num_runs=5
+
+Network training (*Global constraining*)
+
+    python ./main/network/experiment_two.py path=ACTUAL_PATH\main\dataset\experiment_two\dataset_final.csv model_path=ACTUAL_PATH\main\dataset\experiment_two\output_model.ph save_output=True constraint_weight=0.0 global_constraining=True num_epochs=35 random_seed_base=41 num_runs=5
+
+Induction on *network predictions*
+
+    LALALALA
 
 ## Credits
 

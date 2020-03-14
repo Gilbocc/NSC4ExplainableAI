@@ -112,6 +112,14 @@ def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, 
 
 parser = argparse.ArgumentParser(description='Experiment One')
 parser = dl2.add_default_parser_args(parser)
+parser.add_argument("path", type=str)
+parser.add_argument("model_path", type=str)
+parser.add_argument("save_output", type=bool)
+parser.add_argument("constraint_weight", type=float)
+parser.add_argument("global_constraining", type=bool)
+parser.add_argument("num_epochs", type=int)
+parser.add_argument("random_seed_base", type=int)
+parser.add_argument("num_runs", type=int)
 args = parser.parse_args()
 config.args = args
 
@@ -119,14 +127,22 @@ if __name__ == '__main__':
     # path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified.csv'
     # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified_model_base.ph'
     # model_path = r'C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified_model_constrained.ph'
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_final.csv'
+    # path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_final.csv'
     # model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_simplified_model_base.ph'
-    model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_final_model_local_constraining.ph'
-    save_output = True
-    constraint_weight = 0.0
-    global_constraining = True
-    num_epochs = 10
-    random_seed_base = 41
-    num_runs = 5
+    # model_path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_one\output_final_model_local_constraining.ph'
+    # save_output = True
+    # constraint_weight = 0.0
+    # global_constraining = True
+    # num_epochs = 10
+    # random_seed_base = 41
+    # num_runs = 5
+    path = args.path
+    model_path = args.model_path
+    save_output = args.save_output
+    constraint_weight = args.constraint_weight
+    global_constraining = args.global_constraining
+    num_epochs = args.num_epochs
+    random_seed_base = args.random_seed_base
+    num_runs = args.num_runs
     results = [local_run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i, model_path, save_output) for i in range(num_runs)]
     print('Mean accuracy for {:d} runs: {:.4f}'.format(num_runs, sum(results) / len(results)))

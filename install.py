@@ -1,6 +1,6 @@
 import os
 
-#conda dependencies D2L
+#conda dependencies DL2
 os.system('conda install numpy')
 os.system('conda install pillow=6.1')
 os.system('conda install scipy')
@@ -26,7 +26,7 @@ os.system('conda install pytest-cov')
 
 os.system('python -m pip install --upgrade pip')
 
-#pip dependencies D2L
+#pip dependencies DL2
 os.system('pip install functional')
 os.system('pip install textX==1.8.0')
 

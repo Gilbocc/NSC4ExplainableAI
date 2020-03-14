@@ -6,7 +6,6 @@ TARGET = "Class"
 NUM_ROWS = 1000
 
 def logic(row):
-    # if row[10] == 1 and row[15] == 0 and row[25] == 1 : return 1
     if row[10] == 1: return 1
     return 0
 

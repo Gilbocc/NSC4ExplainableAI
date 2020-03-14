@@ -74,10 +74,6 @@ if __name__ == '__main__':
     train_list = read_list_from_file(conf["data"]["data_path"])
     rules_list = read_list_from_file(conf["data"]["rule_path"])
 
-    # print(train_list)
-    # print(rules_list)
-    # print(symbol_relationships)
-
     if conf["experiment"]["test"] == True:
         test_kb, train_list = gen_test_kb(train_list, conf["experiment"]["n_test"], conf["experiment"]["test_active_only"], relationships)
     else:
@@ -88,19 +84,6 @@ if __name__ == '__main__':
 
     rules, confidences, stringified_rules, eval_dict = train_model(kb, templates, conf, relationships=symbol_relationships, test_kb=test_kb)
     
-    # constant_dict = gen_constant_dict(train_list)
-    # eval_dict["active_facts"] = count_active(constant_dict, relationships)
-    # eval_dict["active_ratio"] = eval_dict["active_facts"] / len(train_list)        
-    
-    # print('-------------Statistics-------------')
-    # for key, value in eval_dict.items():
-    #     if key in eval_history:
-    #         print(key, value)
-    #         eval_history[key].append(value)
-    
-    # auc_helper_list.append(eval_dict["auc_helper"])
-    # print(eval_dict["auc_helper"])
-
     print('-------------Rules-------------')
     print(stringified_rules)
     print('-------------Confidences-------------')
