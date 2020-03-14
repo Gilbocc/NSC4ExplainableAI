@@ -76,7 +76,7 @@ def run_from_model(model_path, theory_path):
         theory_file.writelines(list(dict.fromkeys(theory)))
 
 def run_from_csv(dataset_path, theory_path):
-
+    
     def load_data():
         pd_data = pd.read_csv(dataset_path)
         return pd_data.iterrows()
@@ -96,14 +96,14 @@ def run_from_csv(dataset_path, theory_path):
         theory_file.writelines(list(dict.fromkeys(theory)))
             
 parser = argparse.ArgumentParser(description='Experiment one theory generator')
-parser.add_argument("model_path", type=str)
-parser.add_argument("dataset_path", type=str)
-parser.add_argument("theory_path", type=str)
-parser.add_argument("is_model", type=bool)
+parser.add_argument("--model_path", type=str)
+parser.add_argument("--dataset_path", type=str)
+parser.add_argument("--theory_path", type=str)
+parser.add_argument("--is_model", type=str)
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    if args.is_model:
+    if args.is_model == 'True':
         run_from_model(args.model_path, args.theory_path)
     else:
         run_from_csv(args.dataset_path, args.theory_path)

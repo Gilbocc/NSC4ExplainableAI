@@ -9,7 +9,8 @@ def random_strings(number, max_length):
     return [random_string(random.randint(4, max_length)).capitalize() for x in range (0, number)]
 
 def generate_data():
-    num_surnames = 100
+    # Con 100
+    num_surnames = 10000
     num_names = 2
     surnames = random_strings(num_surnames, 10)
     names = ['Pino', 'Zenio']
@@ -28,7 +29,7 @@ def generate_data():
     return labelled_people
 
 if __name__ == '__main__':
-    with open('output_final.csv', 'w', newline='') as file:
+    with open('dataset_final.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Surname", "Class"])
         for i in generate_data():
