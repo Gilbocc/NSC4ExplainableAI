@@ -35,9 +35,9 @@ class Model(nn.Module):
         super(Model, self).__init__()
          
         self.linearlinear = nn.Sequential(
-            nn.Linear(n_in, 10, bias=True),   # Hidden layer.
+            nn.Linear(n_in, n_out, bias=True),   # Hidden layer.
             nn.ReLU(),
-            nn.Linear(10, n_out, bias=True),   # Hidden layer.
+            # nn.Linear(10, n_out, bias=True),   # Hidden layer.
         )
         self.logprob = nn.LogSoftmax(dim=1) # -Log(Softmax probability).
     
@@ -80,20 +80,35 @@ def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, 
     oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
     return run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output)
 
-
 parser = argparse.ArgumentParser(description='Experiment votes')
 parser = dl2.add_default_parser_args(parser)
+parser.add_argument("--path", type=str)
+parser.add_argument("--model_path", type=str)
+parser.add_argument("--save_output", type=str)
+parser.add_argument("--constraint_weight", type=str)
+parser.add_argument("--global_constraining", type=str)
+parser.add_argument("--num_epochs", type=str)
+parser.add_argument("--random_seed_base", type=str)
+parser.add_argument("--num_runs", type=str)
 args = parser.parse_args()
 config.args = args
             
 if __name__ == '__main__':
-    path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_votes\house-votes-84_parsed.csv'
-    model_path = r''
-    save_output = False
-    constraint_weight = 0.0
-    global_constraining = False
-    num_epochs = 10
-    random_seed_base = 41
-    num_runs = 1
+    # path = r'C:\Users\giuseppe.pisano\Documents\MyProjects\University\NSC4ExplainableAI\NetworkConstraining\DL2\main\dataset\experiment_votes\house-votes-84_parsed.csv'
+    # model_path = r''
+    # save_output = False
+    # constraint_weight = 0.0
+    # global_constraining = False
+    # num_epochs = 1000
+    # random_seed_base = 47
+    # num_runs = 1
+    path = args.path
+    model_path = args.model_path
+    save_output = args.save_output == 'True'
+    constraint_weight = float(args.constraint_weight)
+    global_constraining = args.global_constraining == 'True'
+    num_epochs = int(args.num_epochs)
+    random_seed_base = int(args.random_seed_base)
+    num_runs = int(args.num_runs)
     results = [local_run(path, constraint_weight, global_constraining, num_epochs, random_seed_base + i, model_path, save_output) for i in range(num_runs)]
     print('Mean accuracy for {:d} runs: {:.4f}'.format(num_runs, sum(results) / len(results)))

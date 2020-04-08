@@ -29,6 +29,8 @@ def read_list_from_file(path):
     with open(path, "r") as f:
         return f.readlines()
 
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 parser = argparse.ArgumentParser(description='Rules finder')
 parser.add_argument("--config_path", type=str)
 parser.add_argument("--theory_path", type=str)
@@ -41,7 +43,7 @@ if __name__ == '__main__':
 
     tf.test.is_built_with_cuda()
     tf.enable_eager_execution()
-    print("GPUs Available: ", get_available_gpus())
+    # print("GPUs Available: ", get_available_gpus())
 
     conf = load_conf(args.config_path)
     conf["data"]["data_path"] = args.theory_path
