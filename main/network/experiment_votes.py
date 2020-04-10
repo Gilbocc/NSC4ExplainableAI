@@ -47,7 +47,7 @@ class Model(nn.Module):
         return x
 
 
-class DummyConstraint(Constraint):
+class FakeConstraint(Constraint):
 
     def __init__(self, net, use_cuda=True, network_output='logits'):
         self.net = net
@@ -55,7 +55,7 @@ class DummyConstraint(Constraint):
         self.use_cuda = use_cuda
         self.n_tvars = 1
         self.n_gvars = 0
-        self.name = 'DummyL'
+        self.name = 'FakeL'
 
     def params(self):
         return {'network_output' : self.network_output}
@@ -64,19 +64,13 @@ class DummyConstraint(Constraint):
         pass
 
     def get_condition(self, x, y):
-
-        rules = [
-            dl2.Implication(dl2.BoolConst(torch.FloatTensor(1) == 1), dl2.LT(y[0], y[1])),
-            dl2.Implication(dl2.BoolConst(torch.FloatTensor(1) == 1), dl2.LT(y[1], y[0]))
-        ]
-
-        return dl2.And(rules)
+        return dl2.Implication(dl2.BoolConst(torch.FloatTensor(x[3]) == 1), dl2.LT(y[0], y[1]))
 
 
 def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output):
     dataset = Values(dataset_path)
     model = Model()
-    constraint = DummyConstraint(model, use_cuda=False, network_output='logprob')
+    constraint = FakeConstraint(model, use_cuda=False, network_output='logprob')
     oracle = DL2_Oracle(net=model, constraint=constraint, use_cuda=False)
     return run(dataset, oracle, model, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output)
 
