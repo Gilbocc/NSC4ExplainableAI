@@ -96,5 +96,5 @@ if __name__ == '__main__':
 
     # Saving results
     with open(conf["data"]["target_path"], 'w+') as target_file:
-        stringified_rules = list(map(lambda x : x + '\n', stringified_rules))
+        stringified_rules = list(map(lambda x, y : x + '    ' + str(y) + '\n', stringified_rules, confidences))
         target_file.writelines(list(dict.fromkeys(stringified_rules)))

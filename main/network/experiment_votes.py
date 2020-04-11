@@ -64,7 +64,8 @@ class FakeConstraint(Constraint):
         pass
 
     def get_condition(self, x, y):
-        return dl2.Implication(dl2.BoolConst(torch.FloatTensor(x[3]) == 1), dl2.LT(y[0], y[1]))
+        a = dl2.EQ(x[3], torch.tensor(0, dtype=torch.float))
+        return dl2.Implication(a, dl2.LT(y[0], y[1]))
 
 
 def local_run(dataset_path, constraint_weight, global_constraining, num_epochs, random_seed, model_path, save_output):

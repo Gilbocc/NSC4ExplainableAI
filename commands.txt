@@ -1,0 +1,18 @@
+C:\Users\peppe_000\Documents\MyProjects\ExplainableAI
+
+
+## Experiment votes ##
+
+python ./main/network/experiment_votes.py --path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\house-votes-84_parsed.csv --model_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\output_model.ph --save_output True --constraint_weight 0.0 --global_constraining False --num_epochs 1000 --random_seed_base 74 --num_runs 1
+
+python ./main/dataset/experiment_votes/theory_generator.py --model_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\output_model.ph --dataset_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\house-votes-84_parsed.csv --theory_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\theory.pl
+
+python ./main/induction/find_logic.py --config_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/induction/config/experiments_config.conf --theory_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/theory.pl --rules_template_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/rules_templates.nlt --rules_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/rules.pl
+
+## With error ## 
+
+python ./main/network/experiment_votes.py --path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\house-votes-84_parsed.csv --model_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\output_model_with_error.ph --save_output True --constraint_weight 0.6 --global_constraining False --num_epochs 1000 --random_seed_base 74 --num_runs 1
+
+python ./main/dataset/experiment_votes/theory_generator.py --model_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\output_model_with_error.ph --dataset_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\house-votes-84_parsed.csv --theory_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\theory_with_error.pl
+
+python ./main/induction/find_logic.py --config_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/induction/config/experiments_config.conf --theory_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/theory_with_error.pl --rules_template_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/rules_templates.nlt --rules_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/rules_with_error.pl

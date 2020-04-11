@@ -54,14 +54,9 @@ def load_data(dataset_path):
         pd_data = pd.read_csv(dataset_path)
         return pd_data.iterrows()
 
-def load_base_theory(base_theory_path):
-    with open(base_theory_path) as f:
-        return f.readlines()
-
-def run(model_path, dataset_path, base_theory_path, theory_path):
+def run(model_path, dataset_path, theory_path):
     model = load_model(model_path)
     data = load_data(dataset_path)
-    # theory = load_base_theory(base_theory_path)
     theory = []
     republicans = []
     democrats = []
@@ -74,15 +69,9 @@ def run(model_path, dataset_path, base_theory_path, theory_path):
             c = model(data)
             y_val = np.argmax(c, axis=1)
             print(parsed_elem, ' ---> ', 'republican' if y_val.item() == 0 else 'democrat', y_val.item() == elem['a'])
-            # if y_val.item() == 0:
-            #     republicans.append('isRepublican({:s}).\n'.format(','.join(map(lambda x: 'n' if x == 0 else 'y' if x == 1 else 'u', parsed_elem))))
-            # else:
-            #     democrats.append('isDemocrat({:s}).\n'.format(','.join(map(lambda x: 'n' if x == 0 else 'y' if x == 1 else 'u', parsed_elem))))
             for feature in FEATURES:
                 theory.append('{:s}{:s}({:s}).\n'.format('inFavourOf' if elem[feature] == 1 else 'contrarTo', FEATURE_MEANING[feature], 'republican' if y_val.item() == 0 else 'democrat'))
 
-    # theory.extend(republicans)
-    # theory.extend(democrats)
     # Salvare su file
     cleaned_theory = list(dict.fromkeys(theory))
     cleaned_theory.sort()
@@ -92,10 +81,9 @@ def run(model_path, dataset_path, base_theory_path, theory_path):
 parser = argparse.ArgumentParser(description='Experiment two theory generator')
 parser.add_argument("--model_path", type=str)
 parser.add_argument("--dataset_path", type=str)
-parser.add_argument("--base_theory_path", type=str)
 parser.add_argument("--theory_path", type=str)
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    run(args.model_path, args.dataset_path, args.base_theory_path, args.theory_path)
+    run(args.model_path, args.dataset_path, args.theory_path)
         
