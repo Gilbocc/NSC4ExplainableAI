@@ -60,21 +60,27 @@ def run(model_path, dataset_path, theory_path):
     theory = []
     republicans = []
     democrats = []
-    theory.append('orientation(democrat).\n')
-    theory.append('orientation(republican).\n')
+    # theory.append('orientation(democrat).\n')
+    # theory.append('orientation(republican).\n')
     for index, elem in data:
         with torch.no_grad():
             parsed_elem = [elem[y] for y in FEATURES]
+            if 2 in parsed_elem: continue
             data = Variable(torch.FloatTensor([parsed_elem]), requires_grad=False)
             c = model(data)
             y_val = np.argmax(c, axis=1)
             print(parsed_elem, ' ---> ', 'republican' if y_val.item() == 0 else 'democrat', y_val.item() == elem['a'])
             for feature in FEATURES:
-                theory.append('{:s}{:s}({:s}).\n'.format('inFavourOf' if elem[feature] == 1 else 'contrarTo', FEATURE_MEANING[feature], 'republican' if y_val.item() == 0 else 'democrat'))
+                theory.append('{:s}{:s}{:s}({:d}).\n'.format(
+                    'republican' if y_val.item() == 0 else 'democrat', 
+                    'InFavourOf' if elem[feature] == 1 else 'ContrarTo', 
+                    FEATURE_MEANING[feature],
+                    index))
+                    # ''.join(map(lambda x: 'n' if x == 0 else 'y' if x == 1 else 'u', parsed_elem))))
 
     # Salvare su file
     cleaned_theory = list(dict.fromkeys(theory))
-    cleaned_theory.sort()
+    # cleaned_theory.sort()
     with open(theory_path, 'w+') as theory_file:
         theory_file.writelines(cleaned_theory)
             

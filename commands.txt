@@ -16,3 +16,29 @@ python ./main/network/experiment_votes.py --path C:\Users\peppe_000\Documents\My
 python ./main/dataset/experiment_votes/theory_generator.py --model_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\output_model_with_error.ph --dataset_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\house-votes-84_parsed.csv --theory_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI\main\dataset\experiment_votes\theory_with_error.pl
 
 python ./main/induction/find_logic.py --config_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/induction/config/experiments_config.conf --theory_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/theory_with_error.pl --rules_template_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/rules_templates.nlt --rules_path C:\Users\peppe_000\Documents\MyProjects\ExplainableAI/main/dataset/experiment_votes/rules_with_error.pl
+
+
+              precision    recall  f1-score   support
+
+           0       0.60      0.17      0.27        35
+           1       0.62      0.92      0.74        52
+
+    accuracy                           0.62        87
+   macro avg       0.61      0.55      0.51        87
+weighted avg       0.61      0.62      0.55        87
+
+Accuracy score: 0.6207
+Mean accuracy for 1 runs: 0.6207
+
+
+              precision    recall  f1-score   support
+
+           0       0.47      0.26      0.33        35
+           1       0.62      0.81      0.70        52
+
+    accuracy                           0.59        87
+   macro avg       0.55      0.53      0.52        87
+weighted avg       0.56      0.59      0.55        87
+
+Accuracy score: 0.5862
+Mean accuracy for 1 runs: 0.5862
