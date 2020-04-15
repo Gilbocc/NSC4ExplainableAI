@@ -6,6 +6,7 @@ from collections import OrderedDict
 import datetime
 import sys
 import tensorflow as tf
+import tensorflow.keras as keras
 import numpy as np
 from sklearn import metrics
 
@@ -31,6 +32,7 @@ def read_list_from_file(path):
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
+
 parser = argparse.ArgumentParser(description='Rules finder')
 parser.add_argument("--config_path", type=str)
 parser.add_argument("--theory_path", type=str)
@@ -43,6 +45,11 @@ if __name__ == '__main__':
 
     tf.test.is_built_with_cuda()
     tf.enable_eager_execution()
+
+    config = tf.compat.v1.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 1.0
+    sess = tf.compat.v1.Session(config=config)
+    keras.backend.set_session(sess)
     # print("GPUs Available: ", get_available_gpus())
 
     conf = load_conf(args.config_path)

@@ -66,6 +66,7 @@ def run(model_path, dataset_path, theory_path):
         with torch.no_grad():
             parsed_elem = [elem[y] for y in FEATURES]
             if 2 in parsed_elem: continue
+            # if index > 200: break
             data = Variable(torch.FloatTensor([parsed_elem]), requires_grad=False)
             c = model(data)
             y_val = np.argmax(c, axis=1)

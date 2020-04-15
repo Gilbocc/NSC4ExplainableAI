@@ -1,10 +1,12 @@
-republicanContrarToAidToNicaraguanContras(X1) :- republicanContrarToDutyFreeExports(X1).    0.08217668
-republicanInFavourOfEducationSpending(X1) :- republicanContrarToSynfuelsCorporationCutback(X1).    0.08071353
-republicanInFavourOfCrime(X1) :- republicanContrarToAidToNicaraguanContras(X1).    0.07708648
-democratInFavourOfExportAdministrationActSouthAfrica(X1) :- democratInFavourOfAidToNicaraguanContras(X1).    0.07396293
-democratInFavourOfMxMissile(X1) :- democratInFavourOfMxMissile(X1).    0.0706067
-democratInFavourOfAntiSatelliteTestBan(X1) :- democratContrarToCrime(X1).    0.069279864
-democratContrarToReligiousGroupsInSchools(X1) :- democratInFavourOfMxMissile(X1).    0.066016994
-democratInFavourOfAdoptionOfTheBudgetResolution(X1) :- democratContrarToWaterProjectCostSharing(X1).    0.05274041
-democratContrarToSuperfundRightToSue(X1) :- democratContrarToCrime(X1).    0.040262677
-republicanContrarToSynfuelsCorporationCutback(X1) :- democratContrarToWaterProjectCostSharing(X1).    0.0053120535
+republicanInFavourOfReligiousGroupsInSchools(X1) :- republicanContrarToAntiSatelliteTestBan(X1).    0.9674307
+republicanInFavourOfAdoptionOfTheBudgetResolution(X1) :- republicanInFavourOfAntiSatelliteTestBan(X1).    0.9606291
+republicanContrarToPhysicianFeeFreeze(X1) :- republicanContrarToExportAdministrationActSouthAfrica(X1).    0.39993688
+republicanInFavourOfAdoptionOfTheBudgetResolution(X1) :- republicanInFavourOfMxMissile(X1), republicanInFavourOfAntiSatelliteTestBan(X1).    0.9564174
+republicanInFavourOfReligiousGroupsInSchools(X1) :- republicanInFavourOfPhysicianFeeFreeze(X1), republicanInFavourOfEducationSpending(X1).    0.9553915
+republicanContrarToExportAdministrationActSouthAfrica(X1) :- republicanContrarToCrime(X1), republicanContrarToExportAdministrationActSouthAfrica(X1).    0.39993688
+republicanInFavourOfReligiousGroupsInSchools(X1) :- republicanInFavourOfReligiousGroupsInSchools(X1), republicanContrarToAntiSatelliteTestBan(X1), republicanInFavourOfCrime(X1).    0.96218705
+republicanInFavourOfAdoptionOfTheBudgetResolution(X1) :- republicanInFavourOfMxMissile(X1), republicanInFavourOfMxMissile(X1), republicanInFavourOfMxMissile(X1).    0.95427465
+republicanContrarToExportAdministrationActSouthAfrica(X1) :- republicanContrarToExportAdministrationActSouthAfrica(X1), republicanContrarToCrime(X1), republicanContrarToExportAdministrationActSouthAfrica(X1).    0.39993688
+republicanInFavourOfReligiousGroupsInSchools(X1) :- republicanInFavourOfElSalvadorAid(X1), republicanInFavourOfPhysicianFeeFreeze(X1), republicanInFavourOfEducationSpending(X1), republicanInFavourOfEducationSpending(X1).    0.9564558
+republicanInFavourOfAdoptionOfTheBudgetResolution(X1) :- republicanInFavourOfMxMissile(X1), republicanInFavourOfAntiSatelliteTestBan(X1), republicanInFavourOfElSalvadorAid(X1), republicanInFavourOfMxMissile(X1).    0.95634454
+republicanContrarToExportAdministrationActSouthAfrica(X1) :- republicanContrarToExportAdministrationActSouthAfrica(X1), republicanContrarToCrime(X1), republicanContrarToExportAdministrationActSouthAfrica(X1), republicanContrarToExportAdministrationActSouthAfrica(X1).    0.39993688
