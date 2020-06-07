@@ -9,6 +9,9 @@ import argparse
 import pandas as pd
 
 FEATURES = [str(x) for x in 'bcdefghijklmnopq']
+RELEVANT_FEATURES = [str(x) for x in 'eljdh']
+
+# 'eljdhmpg'
 
 FEATURE_MEANING = {
     'b' : 'HandicappedInfants',
@@ -71,7 +74,7 @@ def run(model_path, dataset_path, theory_path):
             c = model(data)
             y_val = np.argmax(c, axis=1)
             print(parsed_elem, ' ---> ', 'republican' if y_val.item() == 0 else 'democrat', y_val.item() == elem['a'])
-            for feature in FEATURES:
+            for feature in RELEVANT_FEATURES:
                 theory.append('{:s}{:s}{:s}({:d}).\n'.format(
                     'republican' if y_val.item() == 0 else 'democrat', 
                     'InFavourOf' if elem[feature] == 1 else 'ContrarTo', 

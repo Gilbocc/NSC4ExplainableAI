@@ -64,7 +64,9 @@ class FakeConstraint(Constraint):
         pass
 
     def get_condition(self, x, y):
-        a = dl2.EQ(x[3], torch.tensor(0, dtype=torch.float))
+        # Se sei contrario al PhysicianFeeFreeze e a favore dell'AdoptionOfTheBudgetResolution sei un repubblicano
+        # a = dl2.EQ(x[6], torch.tensor(0, dtype=torch.float))
+        a = dl2.And([dl2.EQ(x[3], torch.tensor(0, dtype=torch.float)), dl2.EQ(x[2], torch.tensor(1, dtype=torch.float))])
         return dl2.Implication(a, dl2.LT(y[1], y[0]))
 
 

@@ -1,12 +1,12 @@
-republicanInFavourOfReligiousGroupsInSchools(X1) :- republicanContrarToAntiSatelliteTestBan(X1).    0.9674307
-republicanInFavourOfAdoptionOfTheBudgetResolution(X1) :- republicanInFavourOfAntiSatelliteTestBan(X1).    0.9606291
-republicanContrarToPhysicianFeeFreeze(X1) :- republicanContrarToExportAdministrationActSouthAfrica(X1).    0.39993688
-republicanInFavourOfAdoptionOfTheBudgetResolution(X1) :- republicanInFavourOfMxMissile(X1), republicanInFavourOfAntiSatelliteTestBan(X1).    0.9564174
-republicanInFavourOfReligiousGroupsInSchools(X1) :- republicanInFavourOfPhysicianFeeFreeze(X1), republicanInFavourOfEducationSpending(X1).    0.9553915
-republicanContrarToExportAdministrationActSouthAfrica(X1) :- republicanContrarToCrime(X1), republicanContrarToExportAdministrationActSouthAfrica(X1).    0.39993688
-republicanInFavourOfReligiousGroupsInSchools(X1) :- republicanInFavourOfReligiousGroupsInSchools(X1), republicanContrarToAntiSatelliteTestBan(X1), republicanInFavourOfCrime(X1).    0.96218705
-republicanInFavourOfAdoptionOfTheBudgetResolution(X1) :- republicanInFavourOfMxMissile(X1), republicanInFavourOfMxMissile(X1), republicanInFavourOfMxMissile(X1).    0.95427465
-republicanContrarToExportAdministrationActSouthAfrica(X1) :- republicanContrarToExportAdministrationActSouthAfrica(X1), republicanContrarToCrime(X1), republicanContrarToExportAdministrationActSouthAfrica(X1).    0.39993688
-republicanInFavourOfReligiousGroupsInSchools(X1) :- republicanInFavourOfElSalvadorAid(X1), republicanInFavourOfPhysicianFeeFreeze(X1), republicanInFavourOfEducationSpending(X1), republicanInFavourOfEducationSpending(X1).    0.9564558
-republicanInFavourOfAdoptionOfTheBudgetResolution(X1) :- republicanInFavourOfMxMissile(X1), republicanInFavourOfAntiSatelliteTestBan(X1), republicanInFavourOfElSalvadorAid(X1), republicanInFavourOfMxMissile(X1).    0.95634454
-republicanContrarToExportAdministrationActSouthAfrica(X1) :- republicanContrarToExportAdministrationActSouthAfrica(X1), republicanContrarToCrime(X1), republicanContrarToExportAdministrationActSouthAfrica(X1), republicanContrarToExportAdministrationActSouthAfrica(X1).    0.39993688
+republicanInFavourOfPhysicianFeeFreeze(X1) :- republicanContrarToAntiSatelliteTestBan(X1).    0.95242625
+democratInFavourOfAdoptionOfTheBudgetResolution(X1) :- democratContrarToPhysicianFeeFreeze(X1).    0.9139625
+democratContrarToMxMissile(X1) :- republicanContrarToSynfuelsCorporationCutback(X1).    0.025005031
+republicanInFavourOfPhysicianFeeFreeze(X1) :- republicanContrarToAntiSatelliteTestBan(X1), republicanContrarToAntiSatelliteTestBan(X1).    0.9424623
+democratInFavourOfAdoptionOfTheBudgetResolution(X1) :- democratInFavourOfAntiSatelliteTestBan(X1), democratContrarToPhysicianFeeFreeze(X1).    0.9226578
+democratContrarToMxMissile(X1) :- republicanContrarToSynfuelsCorporationCutback(X1), republicanContrarToSynfuelsCorporationCutback(X1).    0.025389321
+republicanInFavourOfPhysicianFeeFreeze(X1) :- republicanContrarToAntiSatelliteTestBan(X1), republicanContrarToAdoptionOfTheBudgetResolution(X1), republicanContrarToAdoptionOfTheBudgetResolution(X1).    0.9473706
+democratInFavourOfAdoptionOfTheBudgetResolution(X1) :- democratContrarToPhysicianFeeFreeze(X1), democratInFavourOfMxMissile(X1), democratInFavourOfAntiSatelliteTestBan(X1).    0.8838938
+republicanInFavourOfMxMissile(X1) :- republicanContrarToSynfuelsCorporationCutback(X1), republicanContrarToSynfuelsCorporationCutback(X1), republicanContrarToSynfuelsCorporationCutback(X1).    0.025061801
+republicanInFavourOfPhysicianFeeFreeze(X1) :- republicanContrarToAntiSatelliteTestBan(X1), republicanContrarToAdoptionOfTheBudgetResolution(X1), republicanContrarToSynfuelsCorporationCutback(X1), republicanContrarToAdoptionOfTheBudgetResolution(X1).    0.9356499
+democratInFavourOfAdoptionOfTheBudgetResolution(X1) :- democratInFavourOfAntiSatelliteTestBan(X1), democratContrarToPhysicianFeeFreeze(X1), democratContrarToPhysicianFeeFreeze(X1), democratInFavourOfAntiSatelliteTestBan(X1).    0.92408264
+democratContrarToMxMissile(X1) :- republicanContrarToSynfuelsCorporationCutback(X1), republicanContrarToSynfuelsCorporationCutback(X1), republicanContrarToSynfuelsCorporationCutback(X1), republicanContrarToSynfuelsCorporationCutback(X1).    0.02489424
